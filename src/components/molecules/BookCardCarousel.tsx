@@ -6,7 +6,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "../ui/carousel";
-import { BookCard, BookCardProps } from "../atoms/bookcard";
+import { BookCard, BookCardProps } from "../atoms/bookCard";
 
 const BookCards: BookCardProps[] = [
   { image: "https://m.media-amazon.com/images/I/51+hk62YF2L._SL500_.jpg" },
