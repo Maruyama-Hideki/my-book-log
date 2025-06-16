@@ -11,6 +11,7 @@ const nextConfig = {
         hostname: "github.com",
       },
     ],
+    domains: ["m.media-amazon.com", "www.kinokuniya.co.jp", "tshop.r10s.jp"],
   },
 };
 

@@ -1,4 +1,6 @@
 import React from "react";
+import Image from "next/image";
+import Link from "next/link";
 
 export type BookCardProps = {
   image: string;
@@ -6,10 +8,14 @@ export type BookCardProps = {
 
 export const BookCard = (props: BookCardProps) => {
   return (
-    <img
-      src={props.image}
-      alt="book"
-      className="w-[300px] h-[400px] object-cover"
-    />
+    <Link href="/book">
+      <Image
+        src={props.image}
+        alt="book"
+        width={300}
+        height={400}
+        className="object-cover cursor-pointer"
+      />
+    </Link>
   );
 };
