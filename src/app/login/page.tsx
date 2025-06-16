@@ -1,5 +1,5 @@
 import { LoginForm } from "@/components/organisms/login-form";
-import { Header } from "@/components/organisms/Header";
+import { Header } from "@/components/organisms/header/Header";
 
 const LoginPage = () => {
   // const [isLogin, setIsLogin] = useState(false);

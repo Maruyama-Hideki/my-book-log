@@ -1,4 +1,4 @@
-import { Header } from "@/components/organisms/Header";
+import { Header } from "@/components/organisms/header/Header";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 

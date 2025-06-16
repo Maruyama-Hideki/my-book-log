@@ -1,6 +1,6 @@
 import React from "react";
-import { Header } from "@/components/organisms/Header";
-import { RecommendBooks } from "@/components/organisms/RecommendBooks";
+import { Header } from "@/components/organisms/header/Header";
+import { RecommendBooks } from "@/components/organisms/recommend-books/RecommendBooks";
 const page = () => {
   return (
     <div>
