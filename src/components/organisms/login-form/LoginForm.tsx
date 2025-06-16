@@ -2,21 +2,30 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useAuthContext } from "@/contexts/AuthContext";
 import { useAuth } from "@/hooks/useAuth";
-import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 export const LoginForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const { login } = useAuth();
+  const { isLogin } = useAuthContext();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const res = await login(username, password);
-    console.log(res);
     setUsername("");
     setPassword("");
   };
+
+  const router = useRouter();
+  useEffect(() => {
+    if (isLogin) {
+      router.push("/mypage");
+    }
+  }, [isLogin]);
 
   return (
     <form
