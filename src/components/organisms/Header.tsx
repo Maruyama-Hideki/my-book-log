@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,52 +11,38 @@ import {
   DropdownMenuTrigger,
   DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
+import { Menu } from "lucide-react";
 
 export const Header = () => {
-  const [showStatusBar, setShowStatusBar] = React.useState<boolean>(true);
-  const [showActivityBar, setShowActivityBar] = React.useState<boolean>(false);
-  const [showPanel, setShowPanel] = React.useState<boolean>(false);
-
   return (
-    <header className="h-16 flex justify-between items-center py-2 px-4 bg-green-300">
-      <h1 className="text-2xl font-bold text-blue-500">My-Book-Log</h1>
-      <nav>
+    <header className="w-full h-20 border-b flex items-center justify-between px-4">
+      <div className="flex items-center gap-4 pl-[24px]">
+        <Link href="/" className="text-xl font-bold">
+          my book log
+        </Link>
+      </div>
+      <div className="flex items-center gap-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Image
-              className="rounded-full object-cover"
-              src="https://www.j-14.com/wp-content/uploads/2023/06/karina-aespa.jpg?crop=0px%2C195px%2C3244px%2C1705px&resize=1200%2C630&quality=86&strip=all"
-              alt="karina"
-              width={48}
-              height={48}
-              style={{ aspectRatio: "1/1" }}
-            />
+            <Button variant="ghost" size="icon">
+              <Menu className="h-5 w-5" />
+            </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56">
-            <DropdownMenuLabel>Appearance</DropdownMenuLabel>
+            <DropdownMenuLabel>menu</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuCheckboxItem
-              checked={showStatusBar}
-              onCheckedChange={setShowStatusBar}
-            >
-              Status Bar
-            </DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem
-              checked={showActivityBar}
-              onCheckedChange={setShowActivityBar}
-              disabled
-            >
-              Activity Bar
-            </DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem
-              checked={showPanel}
-              onCheckedChange={setShowPanel}
-            >
-              Panel
-            </DropdownMenuCheckboxItem>
+            <Link href="/mypage">
+              <DropdownMenuCheckboxItem>my page</DropdownMenuCheckboxItem>
+            </Link>
+            <Link href="/settings">
+              <DropdownMenuCheckboxItem>settings</DropdownMenuCheckboxItem>
+            </Link>
+            <Link href="/panel">
+              <DropdownMenuCheckboxItem>Panel</DropdownMenuCheckboxItem>
+            </Link>
           </DropdownMenuContent>
         </DropdownMenu>
-      </nav>
+      </div>
     </header>
   );
 };
