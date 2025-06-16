@@ -1,21 +1,23 @@
 import { http } from "msw";
 import { LoginRequestBody } from "@/api/auth";
 
+type LoginRequest = {
+  username: string;
+  password: string;
+};
+
 export const handlers = [
   http.post("/api/login", async ({ request }) => {
-    const body = (await request.json()) as LoginRequestBody;
-    if (
-      body.user?.username === "hideki" &&
-      body.user?.password === "password"
-    ) {
+    const body = (await request.json()) as LoginRequest;
+    if (body.username === "hideki" && body.password === "password") {
       return new Response(
         JSON.stringify({
           message: "Login Success!",
           token: "12345678",
           user: {
             id: 1,
-            username: body.user?.username,
-            password: body.user?.password,
+            username: body.username,
+            password: body.password,
           },
         }),
         {

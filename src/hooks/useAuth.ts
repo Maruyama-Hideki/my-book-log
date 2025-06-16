@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { authApi } from "@/api/auth";
+import { useAuthContext } from "@/contexts/AuthContext";
 
 type User = {
   id: number;
@@ -13,6 +14,7 @@ export const useAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const { setIsLogin } = useAuthContext();
 
   const login = async (username: string, password: string) => {
     try {
@@ -24,6 +26,7 @@ export const useAuth = () => {
         localStorage.setItem("token", response.token);
         localStorage.setItem("user", JSON.stringify(response.user));
       }
+      setIsLogin(true);
       return response;
     } catch (err) {
       setError(err instanceof Error ? err.message : "ログインに失敗しました");
