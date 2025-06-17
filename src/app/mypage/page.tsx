@@ -1,11 +1,11 @@
 import React from "react";
 import { Header } from "@/components/organisms/header/Header";
-import { RecommendBooks } from "@/components/organisms/recent-books/recentBooks";
+import { RecentBooks } from "@/components/organisms/recent-books";
 const page = () => {
   return (
     <div>
       <Header />
-      <RecommendBooks />
+      <RecentBooks />
     </div>
   );
 };

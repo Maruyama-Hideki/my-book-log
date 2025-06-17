@@ -26,15 +26,16 @@ export const useGemini = () => {
         body: JSON.stringify({ recentBooks, mood }),
       });
 
+      const data = await res.json();
+
       if (!res.ok) {
-        throw new Error("Failed to fetch recommendation");
+        throw new Error(data.error || "レコメンデーションの取得に失敗しました");
       }
 
-      const data = await res.json();
       setRecommendation(data.text);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "An unknown error occurred"
+        err instanceof Error ? err.message : "予期せぬエラーが発生しました"
       );
       setRecommendation(null);
     } finally {

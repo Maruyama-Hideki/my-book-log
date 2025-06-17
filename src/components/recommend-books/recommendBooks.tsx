@@ -63,7 +63,12 @@ export const RecommendBooks = () => {
         本を探す
       </Button>
       {isLoading && <p>読み込み中...</p>}
-      {error && <p>エラーが発生しました: {error}</p>}
+      {error && (
+        <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+          <p>エラーが発生しました:</p>
+          <p>{error}</p>
+        </div>
+      )}
       {recommendation && <p>{recommendation}</p>}
     </div>
   );
