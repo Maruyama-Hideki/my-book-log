@@ -3,7 +3,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { useEffect } from "react";
-import { worker } from "@/mocks/browser";
 import { AuthProvider } from "@/contexts/AuthContext";
 
 const geistSans = Geist({
@@ -23,7 +22,11 @@ export default function RootLayout({
 }>) {
   useEffect(() => {
     if (process.env.NODE_ENV === "development") {
-      worker.start();
+      import("@/mocks/browser").then(({ worker }) => {
+        worker.start({
+          onUnhandledRequest: "bypass",
+        });
+      });
     }
   }, []);
 
