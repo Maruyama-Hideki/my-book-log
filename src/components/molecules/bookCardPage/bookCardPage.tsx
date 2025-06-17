@@ -1,8 +1,7 @@
 import { ArrowLeft, Star } from "lucide-react";
-import Image from "next/image";
 import React from "react";
 
-export const BookCardPage = ({ bookUrl }: { bookUrl: string }) => {
+export const BookCardPage = () => {
   const book = {
     title: "人工知能は人間を超えるか",
     author: "松尾 豊",

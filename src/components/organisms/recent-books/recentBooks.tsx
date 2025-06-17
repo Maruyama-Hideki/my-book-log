@@ -21,9 +21,12 @@ const BookCards: BookCardProps[] = [
   { image: "https://m.media-amazon.com/images/I/61hSBs5nxWL.jpg" },
 ];
 
-export const RecommendBooks = () => {
+export const RecentBooks = () => {
   return (
     <div className="flex flex-col gap-4 w-full">
+      <h2 className="text-2xl font-bold mb-[16px] pl-[16px] pt-[16px]">
+        recommend books
+      </h2>
       <div className="w-full">
         <BookCardCarousel bookCards={BookCards} />
       </div>

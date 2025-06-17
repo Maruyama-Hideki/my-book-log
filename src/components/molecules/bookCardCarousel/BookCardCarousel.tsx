@@ -14,8 +14,7 @@ export const BookCardCarousel = ({
   bookCards: BookCardProps[];
 }) => {
   return (
-    <div className="w-full relative pt-[16px] px-[16px]">
-      <h2 className="text-2xl font-bold mb-[16px]">recommend books</h2>
+    <div className="w-full relative px-[16px]">
       <Carousel
         opts={{
           align: "start",
