@@ -14,9 +14,13 @@ type RecommendationResponse = {
 
 export const RecommendBookCard = ({
   recommendation,
+  bookImages,
 }: {
   recommendation: string | null;
+  bookImages: string[];
 }) => {
+  console.log("bookImages:", bookImages);
+
   if (!recommendation) return null;
   try {
     const data: RecommendationResponse = JSON.parse(recommendation);
@@ -35,6 +39,7 @@ export const RecommendBookCard = ({
                   <p>ISBN: {book.ISBN}</p>
                 </div>
                 <p className="text-md">{book.summary}</p>
+                <img src={bookImages[index]} alt={book.title} />
               </div>
             ))}
           </div>

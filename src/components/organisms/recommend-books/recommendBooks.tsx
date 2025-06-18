@@ -1,27 +1,48 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useGemini } from "@/hooks/useGemini";
 import { Input } from "@/components/ui/input";
 import { Button } from "../../ui/button";
 import { PlusIcon } from "lucide-react";
 import { RecommendBookCard } from "../../molecules/recommend-book-card";
+import { getBookImage } from "@/lib/openBD";
+
+type RecommendationResponse = {
+  books: Array<{ ISBN: string }>;
+};
 
 export const RecommendBooks = () => {
   const { getRecommendation, recommendation, isLoading, error } = useGemini();
   const [mood, setMood] = useState("");
   const [recentBooks, setRecentBooks] = useState<string[]>([""]);
+  const [bookImages, setBookImages] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      const data = recommendation
+        ? (JSON.parse(recommendation) as RecommendationResponse)
+        : null;
+      const ISBN = data?.books?.map((book) => book.ISBN);
+      console.log("ISBN:", ISBN);
+      if (ISBN) {
+        const images = await getBookImage(ISBN);
+        setBookImages(images);
+      } else {
+        setBookImages([]);
+      }
+    };
+    fetchImages();
+  }, [recommendation]);
 
   const addBook = () => {
     setRecentBooks([...recentBooks, ""]);
   };
-
   const removeBook = (index: number) => {
     if (recentBooks.length > 1) {
       setRecentBooks(recentBooks.filter((_, i) => i !== index));
     }
   };
-
   const updateBook = (index: number, value: string) => {
     const newBooks = [...recentBooks];
     newBooks[index] = value;
@@ -78,7 +99,10 @@ export const RecommendBooks = () => {
           <p>{error}</p>
         </div>
       )}
-      <RecommendBookCard recommendation={recommendation} />
+      <RecommendBookCard
+        recommendation={recommendation}
+        bookImages={bookImages}
+      />
     </div>
   );
 };
