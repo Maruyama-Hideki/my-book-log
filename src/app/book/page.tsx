@@ -1,8 +1,8 @@
-import { BookCardPage } from "@/components/molecules/bookCardPage";
+import { BookCardDescription } from "@/components/molecules/book-card-description";
 import React from "react";
 
 const bookDescriptionPage = () => {
-  return <BookCardPage />;
+  return <BookCardDescription />;
 };
 
 export default bookDescriptionPage;

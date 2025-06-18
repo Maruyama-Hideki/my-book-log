@@ -29,7 +29,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/components/molecules/bookCardPage"
+    "src/components/molecules/book-card-description"
   ],
   "exclude": ["node_modules"]
 }

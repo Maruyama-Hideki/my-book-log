@@ -7,9 +7,7 @@ import { askGemini } from "@/lib/gemini";
  */
 export async function POST(request: Request) {
   try {
-    console.log("API endpoint called");
     const result = await askGemini(request);
-    console.log("API result:", result);
     return result;
   } catch (error) {
     console.error("API route error:", error);

@@ -1,7 +1,7 @@
 import { ArrowLeft, Star } from "lucide-react";
 import React from "react";
 
-export const BookCardPage = () => {
+export const BookCardDescription = () => {
   const book = {
     title: "人工知能は人間を超えるか",
     author: "松尾 豊",

@@ -3,7 +3,9 @@
 import React, { useState } from "react";
 import { useGemini } from "@/hooks/useGemini";
 import { Input } from "@/components/ui/input";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
+import { PlusIcon } from "lucide-react";
+import { RecommendBookCard } from "../../molecules/recommend-book-card";
 
 export const RecommendBooks = () => {
   const { getRecommendation, recommendation, isLoading, error } = useGemini();
@@ -27,29 +29,34 @@ export const RecommendBooks = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4 pt-[60px]">
-      <div>
-        <p>今の気分は？</p>
-        <Input value={mood} onChange={(e) => setMood(e.target.value)} />
+    <div className="flex flex-col gap-4 pt-[60px] items-center">
+      <div className="flex flex-col items-start w-full max-w-[400px]">
+        <p className="mb-[12px] text-lg">今の気分は？</p>
+        <Input
+          value={mood}
+          onChange={(e) => setMood(e.target.value)}
+          className="w-full h-[40px]"
+        />
       </div>
-      <div>
-        <p>最近読んだ本</p>
+      <div className="flex flex-col items-start w-full max-w-[400px]">
+        <p className="mb-[12px] text-lg">最近読んだ本</p>
         {recentBooks.map((book, index) => (
           <div key={index} className="flex gap-2 mb-2">
             <Input
               value={book}
               onChange={(e) => updateBook(index, e.target.value)}
               placeholder={`本 ${index + 1}`}
+              className="w-[400px] h-[40px] text-lg"
             />
             {recentBooks.length > 1 && (
-              <Button onClick={() => removeBook(index)} variant="destructive">
+              <Button onClick={() => removeBook(index)} variant="secondary">
                 削除
               </Button>
             )}
           </div>
         ))}
-        <Button onClick={addBook} variant="outline">
-          本を追加
+        <Button onClick={addBook} variant="secondary">
+          <PlusIcon className="w-4 h-4" />
         </Button>
       </div>
       <Button
@@ -59,6 +66,8 @@ export const RecommendBooks = () => {
             recentBooks: recentBooks.filter((book) => book.trim() !== ""),
           })
         }
+        className="mt-[12px]"
+        variant="secondary"
       >
         本を探す
       </Button>
@@ -69,7 +78,7 @@ export const RecommendBooks = () => {
           <p>{error}</p>
         </div>
       )}
-      {recommendation && <p>{recommendation}</p>}
+      <RecommendBookCard recommendation={recommendation} />
     </div>
   );
 };

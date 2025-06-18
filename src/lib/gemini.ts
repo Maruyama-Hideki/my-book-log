@@ -3,18 +3,20 @@ import { NextResponse } from "next/server";
 
 export const askGemini = async (request: Request) => {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
-  console.log("API Key check:", {
-    hasApiKey: !!apiKey,
-    apiKeyLength: apiKey?.length,
-    apiKeyPrefix: apiKey?.substring(0, 10) + "...",
-  });
 
   if (!apiKey) {
     return new NextResponse("GOOGLE_API_KEY is not set", { status: 500 });
   }
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const model = genAI.getGenerativeModel({
+    model: "gemini-1.5-flash",
+    generationConfig: {
+      temperature: 0.1,
+      topP: 0.8,
+      topK: 40,
+    },
+  });
 
   try {
     const reqBody = await request.json();
@@ -30,12 +32,65 @@ export const askGemini = async (request: Request) => {
       "、"
     )}」です。今の気分は「${
       reqBody.mood
-    }」です。次に読むべきおすすめの本を3冊、理由つきで教えてください。`;
+    }」です。次に読むべきおすすめの本を3冊、以下のJSON形式で返してください。
+
+必ず以下の形式で返してください。余分な説明やテキストは含めないでください：
+
+{
+  "books": [
+    {
+      "title": "本のタイトル",
+      "author": "著者名",
+      "publisher": "出版社名",
+      "summary": "あらすじ（100文字程度）"
+      "ISBN": "ISBN"
+    },
+    {
+      "title": "本のタイトル",
+      "author": "著者名",
+      "publisher": "出版社名",
+      "summary": "あらすじ（100文字程度）"
+      "ISBN": "ISBN"
+    },
+    {
+      "title": "本のタイトル",
+      "author": "著者名",
+      "publisher": "出版社名",
+      "summary": "あらすじ（100文字程度）"
+      "ISBN": "ISBN"
+    }
+  ]
+}`;
 
     const result = await model.generateContent(prompt);
     const response = result.response;
     const text = response.text();
-    return NextResponse.json({ text });
+
+    // レスポンステキストからJSONを抽出
+    let jsonText = text;
+
+    // コードブロックで囲まれている場合は除去
+    if (text.includes("```json")) {
+      const jsonMatch = text.match(/```json\s*([\s\S]*?)\s*```/);
+      if (jsonMatch) {
+        jsonText = jsonMatch[1];
+      }
+    } else if (text.includes("```")) {
+      const jsonMatch = text.match(/```\s*([\s\S]*?)\s*```/);
+      if (jsonMatch) {
+        jsonText = jsonMatch[1];
+      }
+    }
+
+    // JSONとしてパースを試行
+    try {
+      const jsonData = JSON.parse(jsonText.trim());
+      return NextResponse.json(jsonData);
+    } catch (error) {
+      console.error("JSONパースエラー:", error);
+      console.error("パースしようとしたテキスト:", jsonText);
+      return NextResponse.json({ text });
+    }
   } catch (error) {
     console.error("Gemini API Error:", error);
     console.error("Error details:", {

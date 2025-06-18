@@ -1,5 +1,5 @@
 import React from "react";
-import { BookCardCarousel } from "../../molecules/bookCardCarousel/BookCardCarousel";
+import { BookCardCarousel } from "../../molecules/book-card-carousel/BookCardCarousel";
 import { BookCardProps } from "@/components/atoms/bookCard";
 
 // APIを繋いで取得したデータをBookCardsに格納する

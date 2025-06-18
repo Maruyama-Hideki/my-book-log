@@ -7,6 +7,17 @@ type RecommendataionRequest = {
   mood: string;
 };
 
+// type BookRecommendation = {
+//   title: string;
+//   author: string;
+//   publisher: string;
+//   summary: string;
+// };
+
+// type RecommendationResponse = {
+//   books: BookRecommendation[];
+// };
+
 export const useGemini = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -32,7 +43,14 @@ export const useGemini = () => {
         throw new Error(data.error || "レコメンデーションの取得に失敗しました");
       }
 
-      setRecommendation(data.text);
+      // 構造化されたデータの場合はJSON.stringifyで文字列化
+      if (data.books && Array.isArray(data.books)) {
+        setRecommendation(JSON.stringify(data));
+      } else if (data.text) {
+        setRecommendation(data.text);
+      } else {
+        setRecommendation(JSON.stringify(data));
+      }
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "予期せぬエラーが発生しました"

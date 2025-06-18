@@ -1,13 +1,8 @@
-import { Header } from "@/components/organisms/header/Header";
-import { RecentBooks } from "@/components/organisms/recent-books";
-import { RecommendBooks } from "@/components/recommend-books";
+import React from "react";
+import { HomePage } from "@/components/pages/homePage";
 
-export default function Home() {
-  return (
-    <>
-      <Header />
-      <RecentBooks />
-      <RecommendBooks />
-    </>
-  );
-}
+const Home = () => {
+  return <HomePage />;
+};
+
+export default Home;
