@@ -6,32 +6,71 @@ import { Input } from "@/components/ui/input";
 import { Button } from "../../ui/button";
 import { PlusIcon } from "lucide-react";
 import { RecommendBookCard } from "../../molecules/recommend-book-card";
-import { getBookImage } from "@/lib/openBD";
+import { getBookImage } from "@/lib/gba";
 
 type RecommendationResponse = {
-  books: Array<{ ISBN: string }>;
+  books: Array<{
+    ISBN: string;
+    title: string;
+    author: string;
+    publisher: string;
+    summary: string;
+  }>;
 };
 
 export const RecommendBooks = () => {
   const { getRecommendation, recommendation, isLoading, error } = useGemini();
   const [mood, setMood] = useState("");
   const [recentBooks, setRecentBooks] = useState<string[]>([""]);
-  const [bookImages, setBookImages] = useState<string[]>([]);
+  const [urls, setUrls] = useState<(string | null)[]>([]);
 
   useEffect(() => {
+    // recommendation が null または undefined の場合は何もしない
+    if (!recommendation) {
+      return;
+    }
+
     const fetchImages = async () => {
-      const data = recommendation
-        ? (JSON.parse(recommendation) as RecommendationResponse)
-        : null;
-      const ISBN = data?.books?.map((book) => book.ISBN);
-      console.log("ISBN:", ISBN);
-      if (ISBN) {
-        const images = await getBookImage(ISBN);
-        setBookImages(images);
-      } else {
-        setBookImages([]);
+      try {
+        const data = JSON.parse(recommendation) as RecommendationResponse;
+
+        if (data && data.books) {
+          const fetchedUrls = await Promise.all(
+            data.books.map(async (book) => {
+              try {
+                const gbaData = await getBookImage(book.title, book.author);
+
+                if (!gbaData?.items) {
+                  return null;
+                }
+
+                let imageUrl: string | null = null;
+                for (const item of gbaData.items) {
+                  // ★★★ この「?.」(オプショナルチェーン)がエラーを防ぐ重要な部分です ★★★
+                  const foundUrl = item.volumeInfo?.imageLinks?.thumbnail;
+                  if (foundUrl) {
+                    imageUrl = foundUrl;
+                    break; // 最初に見つかった画像で決定
+                  }
+                }
+                return imageUrl; // 画像が見つからなければ null が返る
+              } catch (error) {
+                // getBookImage自体が失敗した場合
+                console.error(
+                  `'${book.title}'の画像取得プロセスでエラー:`,
+                  error
+                );
+                return null;
+              }
+            })
+          );
+          setUrls(fetchedUrls);
+        }
+      } catch (e) {
+        console.error("recommendationのパースに失敗", e);
       }
     };
+
     fetchImages();
   }, [recommendation]);
 
@@ -99,10 +138,7 @@ export const RecommendBooks = () => {
           <p>{error}</p>
         </div>
       )}
-      <RecommendBookCard
-        recommendation={recommendation}
-        bookImages={bookImages}
-      />
+      <RecommendBookCard recommendation={recommendation} urls={urls} />
     </div>
   );
 };

@@ -34,6 +34,12 @@ export const askGemini = async (request: Request) => {
       reqBody.mood
     }」です。次に読むべきおすすめの本を3冊、以下のJSON形式で返してください。
 
+# 最重要ルールです。以下のルールは絶対に守ってください。
+- ISBNコードは、絶対に間違えないでください。架空の番号を生成してはいけません。
+- もし正確なISBNが不明、または自信がない場合は、その値を必ず null にしてください。
+- 制御文字（改行文字、タブ文字など）は絶対に含めないでください。
+- 必ず有効なJSON形式で返してください。
+
 必ず以下の形式で返してください。余分な説明やテキストは含めないでください：
 
 {
@@ -42,21 +48,21 @@ export const askGemini = async (request: Request) => {
       "title": "本のタイトル",
       "author": "著者名",
       "publisher": "出版社名",
-      "summary": "あらすじ（100文字程度）"
+      "summary": "あらすじ（100文字程度）",
       "ISBN": "ISBN"
     },
     {
       "title": "本のタイトル",
       "author": "著者名",
       "publisher": "出版社名",
-      "summary": "あらすじ（100文字程度）"
+      "summary": "あらすじ（100文字程度）",
       "ISBN": "ISBN"
     },
     {
       "title": "本のタイトル",
       "author": "著者名",
       "publisher": "出版社名",
-      "summary": "あらすじ（100文字程度）"
+      "summary": "あらすじ（100文字程度）",
       "ISBN": "ISBN"
     }
   ]
@@ -65,6 +71,8 @@ export const askGemini = async (request: Request) => {
     const result = await model.generateContent(prompt);
     const response = result.response;
     const text = response.text();
+
+    console.log("Gemini生レスポンス:", text);
 
     // レスポンステキストからJSONを抽出
     let jsonText = text;
@@ -84,7 +92,27 @@ export const askGemini = async (request: Request) => {
 
     // JSONとしてパースを試行
     try {
-      const jsonData = JSON.parse(jsonText.trim());
+      // 制御文字を除去してからパース
+      let cleanedJsonText = jsonText.trim().replace(/\r/g, ""); // キャリッジリターンのみ除去
+
+      // JSON文字列内の制御文字のみを除去（改行は保持）
+      cleanedJsonText = cleanedJsonText.replace(
+        /"([^"]*?)"/g,
+        (match, content) => {
+          const cleanedContent = content.replace(
+            /[\u0000-\u0009\u000B-\u001F\u007F-\u009F]/g,
+            ""
+          );
+          return `"${cleanedContent}"`;
+        }
+      );
+
+      // 最終的な制御文字除去（改行とタブは保持）
+      cleanedJsonText = cleanedJsonText
+        .replace(/[\u0000-\u0008\u000B-\u001F\u007F-\u009F]/g, "")
+        .replace(/\t/g, " "); // タブを空白に置換
+
+      const jsonData = JSON.parse(cleanedJsonText);
       return NextResponse.json(jsonData);
     } catch (error) {
       console.error("JSONパースエラー:", error);

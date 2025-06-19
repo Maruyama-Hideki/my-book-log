@@ -10,8 +10,29 @@ const nextConfig = {
         protocol: "https",
         hostname: "github.com",
       },
+      {
+        protocol: "https",
+        hostname: "ndlsearch.ndl.go.jp",
+        pathname: "/thumbnail/**",
+      },
+      {
+        protocol: "https",
+        hostname: "m.media-amazon.com",
+      },
+      {
+        protocol: "https",
+        hostname: "www.kinokuniya.co.jp",
+      },
+      {
+        protocol: "https",
+        hostname: "tshop.r10s.jp",
+      },
+      // ▼▼▼ 今回追加する設定 ▼▼▼
+      {
+        protocol: "http",
+        hostname: "books.google.com",
+      },
     ],
-    domains: ["m.media-amazon.com", "www.kinokuniya.co.jp", "tshop.r10s.jp"],
   },
 };
 

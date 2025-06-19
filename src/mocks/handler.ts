@@ -1,4 +1,5 @@
-import { http } from "msw";
+// "passthrough" をmswからインポートする
+import { http, passthrough } from "msw";
 import { LoginRequestBody } from "@/api/auth";
 
 type LoginRequest = {
@@ -7,6 +8,7 @@ type LoginRequest = {
 };
 
 export const handlers = [
+  // 既存のログインAPIのモック
   http.post("/api/login", async ({ request }) => {
     const body = (await request.json()) as LoginRequest;
     if (body.username === "hideki" && body.password === "password") {
@@ -37,4 +39,11 @@ export const handlers = [
       }
     );
   }),
+
+  // ▼▼▼ ここから追加 ▼▼▼
+  // Next.jsの画像最適化リクエストは、MSWの対象外にしてそのまま通す
+  http.get("http://localhost:3000/_next/image", () => {
+    return passthrough();
+  }),
+  // ▲▲▲ ここまで追加 ▲▲▲
 ];

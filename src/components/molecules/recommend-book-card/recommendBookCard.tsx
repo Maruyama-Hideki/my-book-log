@@ -1,11 +1,12 @@
 import React from "react";
+import Image from "next/image";
 
 type BookRecommendation = {
   title: string;
   author: string;
   publisher: string;
   summary: string;
-  ISBN: string;
+  ISBN: string[];
 };
 
 type RecommendationResponse = {
@@ -14,13 +15,12 @@ type RecommendationResponse = {
 
 export const RecommendBookCard = ({
   recommendation,
-  bookImages,
+  urls,
 }: {
   recommendation: string | null;
-  bookImages: string[];
+  urls: (string | null)[] | null;
 }) => {
-  console.log("bookImages:", bookImages);
-
+  console.log("urls:", urls);
   if (!recommendation) return null;
   try {
     const data: RecommendationResponse = JSON.parse(recommendation);
@@ -39,7 +39,15 @@ export const RecommendBookCard = ({
                   <p>ISBN: {book.ISBN}</p>
                 </div>
                 <p className="text-md">{book.summary}</p>
-                <img src={bookImages[index]} alt={book.title} />
+                {urls && urls[index] && (
+                  <Image
+                    src={urls[index]}
+                    alt={book.title}
+                    width={200}
+                    height={300}
+                    className="w-full h-auto"
+                  />
+                )}
               </div>
             ))}
           </div>

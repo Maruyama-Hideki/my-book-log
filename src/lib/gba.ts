@@ -1,8 +1,8 @@
-export const getBookImage = async (isbn: string[]) => {
-  const res = await fetch("api/openBD", {
+export const getBookImage = async (title: string, author: string) => {
+  const res = await fetch("api/gba", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ isbn }),
+    body: JSON.stringify({ title, author }),
   });
 
   if (!res.ok) {
@@ -12,5 +12,5 @@ export const getBookImage = async (isbn: string[]) => {
   const data = await res.json();
   console.log("data:", data);
 
-  return data;
+  return data || null;
 };
