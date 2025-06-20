@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 export type BookCardProps = {
+  id: string;
   image: string;
 };
 

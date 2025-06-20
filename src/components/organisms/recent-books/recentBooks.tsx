@@ -4,21 +4,29 @@ import { BookCardProps } from "@/components/atoms/bookCard";
 
 // APIを繋いで取得したデータをBookCardsに格納する
 const BookCards: BookCardProps[] = [
-  { image: "https://m.media-amazon.com/images/I/51+hk62YF2L._SL500_.jpg" },
-  { image: "https://m.media-amazon.com/images/I/71ld5EcSVSL.jpg" },
-  { image: "https://m.media-amazon.com/images/I/51076TYQYPL.jpg" },
   {
+    id: "1",
+    image: "https://m.media-amazon.com/images/I/51+hk62YF2L._SL500_.jpg",
+  },
+  { id: "2", image: "https://m.media-amazon.com/images/I/71ld5EcSVSL.jpg" },
+  { id: "3", image: "https://m.media-amazon.com/images/I/51076TYQYPL.jpg" },
+  {
+    id: "4",
     image:
       "https://tshop.r10s.jp/book/cabinet/9313/9784167919313_1_6.jpg?downsize=600:*",
   },
-  { image: "https://m.media-amazon.com/images/I/51RsDYXDIwL.jpg" },
+  { id: "5", image: "https://m.media-amazon.com/images/I/51RsDYXDIwL.jpg" },
   {
+    id: "6",
     image:
       "https://www.kinokuniya.co.jp/images/goods/ar2/web/eimgdata/9987031323.jpg",
   },
-  { image: "https://m.media-amazon.com/images/I/31UzRHnwdlL._SX300_.jpg" },
-  { image: "https://m.media-amazon.com/images/I/71Lcp+A51gL.jpg" },
-  { image: "https://m.media-amazon.com/images/I/61hSBs5nxWL.jpg" },
+  {
+    id: "7",
+    image: "https://m.media-amazon.com/images/I/31UzRHnwdlL._SX300_.jpg",
+  },
+  { id: "8", image: "https://m.media-amazon.com/images/I/71Lcp+A51gL.jpg" },
+  { id: "9", image: "https://m.media-amazon.com/images/I/61hSBs5nxWL.jpg" },
 ];
 
 export const RecentBooks = () => {

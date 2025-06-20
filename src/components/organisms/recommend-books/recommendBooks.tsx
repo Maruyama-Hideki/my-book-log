@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "../../ui/button";
 import { PlusIcon } from "lucide-react";
 import { RecommendBookCard } from "../../molecules/recommend-book-card";
-import { getBookImage } from "@/lib/gba";
+import { getBookData } from "@/lib/gba";
 
 type RecommendationResponse = {
   books: Array<{
@@ -38,7 +38,7 @@ export const RecommendBooks = () => {
           const fetchedUrls = await Promise.all(
             data.books.map(async (book) => {
               try {
-                const gbaData = await getBookImage(book.title, book.author);
+                const gbaData = await getBookData(book.title, book.author);
 
                 if (!gbaData?.items) {
                   return null;

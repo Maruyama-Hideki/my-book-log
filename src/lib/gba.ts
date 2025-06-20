@@ -1,4 +1,4 @@
-export const getBookImage = async (title: string, author: string) => {
+export const getBookData = async (title: string, author: string) => {
   const res = await fetch("api/gba", {
     method: "POST",
     headers: { "Content-Type": "application/json" },

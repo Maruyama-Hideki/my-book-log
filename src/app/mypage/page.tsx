@@ -1,13 +1,8 @@
 import React from "react";
-import { Header } from "@/components/organisms/header/Header";
-import { RecentBooks } from "@/components/organisms/recent-books";
+import { MyPage } from "@/components/pages/myPage";
+
 const page = () => {
-  return (
-    <div>
-      <Header />
-      <RecentBooks />
-    </div>
-  );
+  return <MyPage />;
 };
 
 export default page;
