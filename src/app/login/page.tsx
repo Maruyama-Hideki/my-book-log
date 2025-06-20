@@ -1,19 +1,8 @@
-import { LoginForm } from "@/components/organisms/login-form";
-import { Header } from "@/components/organisms/header/Header";
+import { LoginPage } from "@/components/pages/LoginPage";
+import React from "react";
 
-const LoginPage = () => {
-  // const [isLogin, setIsLogin] = useState(false);
-  // const onClickLogin = () => {
-  //   setIsLogin(true);
-  // };
-  return (
-    <div className="min-h-screen flex flex-col bg-gray-100">
-      <Header />
-      <div className="flex justify-center items-center flex-1">
-        <LoginForm />
-      </div>
-    </div>
-  );
+const page = () => {
+  return <LoginPage />;
 };
 
-export default LoginPage;
+export default page;

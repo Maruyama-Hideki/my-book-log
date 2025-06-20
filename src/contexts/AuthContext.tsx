@@ -1,33 +1,40 @@
 "use client";
-
-import React, { createContext, useContext, useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { User } from "@supabase/supabase-js";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 type AuthContextType = {
-  isLogin: boolean;
-  setIsLogin(v: boolean): void;
-  logout(): void;
+  user: User | null;
 };
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+});
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [isLogin, setIsLogin] = useState(false);
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const supabase = createClient();
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    setIsLogin(!!token);
-  }, []);
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      setUser(session?.user ?? null);
+    });
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setIsLogin(false);
-  };
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [supabase.auth]);
 
   return (
-    <AuthContext.Provider value={{ isLogin, setIsLogin, logout }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>
   );
 };
 

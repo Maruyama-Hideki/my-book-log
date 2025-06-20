@@ -1,45 +1,66 @@
 "use client";
 
+import { createClient } from "@/lib/supabase/client";
 import { useState } from "react";
-import { authApi } from "@/api/auth";
-import { useAuthContext } from "@/contexts/AuthContext";
-
-type User = {
-  id: number;
-  username: string;
-  password: string;
-};
+import { useRouter } from "next/navigation";
 
 export const useAuth = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [user, setUser] = useState<User | null>(null);
-  const { setIsLogin } = useAuthContext();
+  const router = useRouter();
+  const supabase = createClient();
 
-  const login = async (username: string, password: string) => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      const response = await authApi(username, password);
-      if (response.token && response.user) {
-        setUser(response.user);
-        localStorage.setItem("token", response.token);
-        localStorage.setItem("user", JSON.stringify(response.user));
-      }
-      setIsLogin(true);
-      return response;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "ログインに失敗しました");
-      throw err;
-    } finally {
-      setIsLoading(false);
+  const signUp = async () => {
+    setIsLoading(true);
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${location.origin}/auth/callback`,
+      },
+    });
+    if (error) {
+      setError(error.message);
+    } else {
+      alert("確認メールを送信しました");
     }
+    router.refresh();
+    setEmail("");
+    setPassword("");
+    setIsLoading(false);
+  };
+
+  const login = async () => {
+    setIsLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) {
+      setError(error.message);
+    }
+    router.refresh();
+    setEmail("");
+    setPassword("");
+    setIsLoading(false);
+  };
+
+  const logout = async () => {
+    await supabase.auth.signOut();
+    router.refresh();
   };
 
   return {
+    email,
+    setEmail,
+    password,
+    setPassword,
     login,
-    isLoading,
+    signUp,
+    logout,
     error,
-    user,
+    isLoading,
   };
 };

@@ -14,10 +14,11 @@ import {
 import { Menu } from "lucide-react";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { Avatar } from "@/components/atoms/Avatar";
+import { useAuth } from "@/hooks/useAuth";
 
 export const Header = () => {
-  const { isLogin } = useAuthContext();
-  const { logout } = useAuthContext();
+  const { user } = useAuthContext();
+  const { logout } = useAuth();
   const onClickLogout = () => {
     logout();
   };
@@ -28,7 +29,7 @@ export const Header = () => {
           my book log
         </Link>
       </div>
-      {isLogin ? (
+      {user ? (
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-4">
             <Avatar image="https://github.com/shadcn.png" />

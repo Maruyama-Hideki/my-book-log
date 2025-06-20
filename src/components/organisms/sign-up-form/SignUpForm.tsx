@@ -7,8 +7,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
-export const LoginForm = () => {
-  const { email, password, setEmail, setPassword, login, isLoading, error } =
+export const SignUpForm = () => {
+  const { email, password, setEmail, setPassword, signUp, isLoading, error } =
     useAuth();
   const { user } = useAuthContext();
   const router = useRouter();
@@ -36,21 +36,13 @@ export const LoginForm = () => {
       {error && <p className="text-red-500">{error}</p>}
       <div>
         <Button
-          type="submit"
-          disabled={isLoading}
-          className="w-[100px] cursor-pointer hover:opacity-60"
-          onClick={login}
-        >
-          {isLoading ? "Loading..." : "ログイン"}
-        </Button>
-        <Button
           type="button"
           disabled={isLoading}
           variant="secondary"
           className="w-[100px] cursor-pointer hover:opacity-60"
-          onClick={() => router.push("/signUp")}
+          onClick={signUp}
         >
-          {isLoading ? "Loading..." : "新規登録"}
+          {isLoading ? "Loading..." : "登録"}
         </Button>
       </div>
     </div>
