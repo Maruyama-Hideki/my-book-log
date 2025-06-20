@@ -126,7 +126,7 @@ export const RecommendBooks = () => {
             recentBooks: recentBooks.filter((book) => book.trim() !== ""),
           })
         }
-        className="mt-[12px]"
+        className="mt-[12px] font-semibold text-gray-500 hover:bg-black hover:text-white hover:border-black cursor-pointer"
         variant="secondary"
       >
         本を探す

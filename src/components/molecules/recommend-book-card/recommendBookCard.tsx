@@ -32,6 +32,15 @@ export const RecommendBookCard = ({
           <div className="flex gap-4">
             {data.books.map((book, index) => (
               <div key={index} className="border rounded-lg p-4 space-y-4">
+                {urls && urls[index] && (
+                  <Image
+                    src={urls[index]}
+                    alt={book.title}
+                    width={200}
+                    height={300}
+                    className="w-[300px] h-[400px]"
+                  />
+                )}
                 <h3 className="text-2xl font-medium">{book.title}</h3>
                 <div className="text-md text-gray-600">
                   <p>著者: {book.author}</p>
@@ -39,15 +48,6 @@ export const RecommendBookCard = ({
                   <p>ISBN: {book.ISBN}</p>
                 </div>
                 <p className="text-md">{book.summary}</p>
-                {urls && urls[index] && (
-                  <Image
-                    src={urls[index]}
-                    alt={book.title}
-                    width={200}
-                    height={300}
-                    className="w-full h-auto"
-                  />
-                )}
               </div>
             ))}
           </div>

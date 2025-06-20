@@ -26,7 +26,7 @@ export const BookCardCarousel = ({
           {bookCards.map((bookCard, index) => (
             <CarouselItem
               key={index}
-              className="md:basis-1/3 lg:basis-1/4 xl:basis-1/6"
+              className="md:basis-1/3 lg:basis-1/3 xl:basis-1/4"
             >
               <BookCard image={bookCard.image} />
             </CarouselItem>
