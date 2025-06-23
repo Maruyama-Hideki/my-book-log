@@ -2,6 +2,8 @@ import React from "react";
 import { BookRowListCard } from "@/components/molecules/book-row-list-card";
 import { GoogleBookItem } from "@/components/organisms/bookshelf/Bookshelf";
 import { BookCardProps } from "@/components/atoms/bookCard";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { createClient } from "@/lib/supabase/client";
 
 type BookRowListProps = {
   results: GoogleBookItem[];
@@ -12,14 +14,38 @@ type BookRowListProps = {
 
 export const BookRowList = (props: BookRowListProps) => {
   const { results, bookList, setBookList, setSearchResult } = props;
+  const { user } = useAuthContext();
+  const supabase = createClient();
 
-  const onClickAdd = (item: GoogleBookItem) => {
-    const newBook: BookCardProps = {
-      id: item.id,
-      image: item.volumeInfo.imageLinks?.thumbnail || "",
+  const onClickAdd = async (item: GoogleBookItem) => {
+    if (!user) {
+      alert("ログインしてください");
+      return;
+    }
+
+    const BookDataToInsert = {
+      user_id: user.id,
+      title: item.volumeInfo.title,
+      author: item.volumeInfo.authors?.join(","),
+      image_url: item.volumeInfo.imageLinks?.thumbnail,
+      google_book_id: item.id,
+      publisher: item.volumeInfo.publisher,
+      published_date: item.volumeInfo.publishedDate,
+      description: item.volumeInfo.description,
     };
-    setBookList([newBook, ...bookList]);
-    setSearchResult([]);
+
+    const { error } = await supabase.from("books").insert(BookDataToInsert);
+    if (error) {
+      console.error("本棚のデータ登録に失敗しました:", error);
+      return;
+    } else {
+      const newBook: BookCardProps = {
+        id: item.id,
+        image: item.volumeInfo.imageLinks?.thumbnail || "",
+      };
+      setBookList([newBook, ...bookList]);
+      setSearchResult([]);
+    }
   };
 
   return (

@@ -18,6 +18,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 export const Header = () => {
   const { user } = useAuthContext();
+  console.log("user:", user);
   const { logout } = useAuth();
   const onClickLogout = () => {
     logout();
@@ -33,7 +34,7 @@ export const Header = () => {
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-4">
             <Avatar image="https://github.com/shadcn.png" />
-            <p>test</p>
+            <p>{user.email}</p>
           </div>
           <div className="flex items-center gap-4">
             <DropdownMenu>

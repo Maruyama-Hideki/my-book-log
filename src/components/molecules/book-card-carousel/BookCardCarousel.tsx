@@ -28,7 +28,7 @@ export const BookCardCarousel = ({
               key={index}
               className="md:basis-1/3 lg:basis-1/3 xl:basis-1/4"
             >
-              <BookCard image={bookCard.image} />
+              <BookCard id={bookCard.id} image={bookCard.image} />
             </CarouselItem>
           ))}
         </CarouselContent>

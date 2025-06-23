@@ -13,11 +13,14 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, XIcon } from "lucide-react";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { getBookData } from "@/lib/gba";
 import { BookRowList } from "../book-row-list";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { createClient } from "@/lib/supabase/client";
+import Link from "next/link";
 
 export type GoogleBookItem = {
   id: string;
@@ -25,6 +28,8 @@ export type GoogleBookItem = {
     title: string;
     authors?: string[];
     publishedDate?: string;
+    publisher?: string;
+    description?: string;
     imageLinks?: {
       thumbnail: string;
     };
@@ -32,35 +37,63 @@ export type GoogleBookItem = {
 };
 
 export const Bookshelf = () => {
+  const { user } = useAuthContext();
+  const supabase = createClient();
+
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [searchResult, setSearchResult] = useState<GoogleBookItem[]>([]);
   const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false);
-  const [bookList, setBookList] = useState<BookCardProps[]>([
-    {
-      id: "1",
-      image: "https://m.media-amazon.com/images/I/51+hk62YF2L._SL500_.jpg",
-    },
-    { id: "2", image: "https://m.media-amazon.com/images/I/71ld5EcSVSL.jpg" },
-    { id: "3", image: "https://m.media-amazon.com/images/I/51076TYQYPL.jpg" },
-    {
-      id: "4",
-      image:
-        "https://tshop.r10s.jp/book/cabinet/9313/9784167919313_1_6.jpg?downsize=600:*",
-    },
-    { id: "5", image: "https://m.media-amazon.com/images/I/51RsDYXDIwL.jpg" },
-    {
-      id: "6",
-      image:
-        "https://www.kinokuniya.co.jp/images/goods/ar2/web/eimgdata/9987031323.jpg",
-    },
-    {
-      id: "7",
-      image: "https://m.media-amazon.com/images/I/31UzRHnwdlL._SX300_.jpg",
-    },
-    { id: "8", image: "https://m.media-amazon.com/images/I/71Lcp+A51gL.jpg" },
-    { id: "9", image: "https://m.media-amazon.com/images/I/61hSBs5nxWL.jpg" },
-  ]);
+  const [bookList, setBookList] = useState<BookCardProps[]>([]);
+
+  useEffect(() => {
+    const fetchUserBooks = async () => {
+      if (user) {
+        const { data, error } = await supabase
+          .from("books")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false });
+
+        if (error) {
+          console.error("本棚のデータ取得に失敗しました:", error);
+        } else if (data) {
+          const formattedBooks = data.map((book) => {
+            return {
+              id: String(book.id),
+              image: book.image_url || "",
+            };
+          });
+          setBookList(formattedBooks);
+        }
+      }
+    };
+    fetchUserBooks();
+  }, [user, supabase]);
+
+  const onClickDelete = async (bookId: string) => {
+    if (!user) {
+      alert("ログインしてください");
+      return;
+    }
+    if (!window.confirm("この本を本棚から削除しますか？")) {
+      return;
+    }
+    try {
+      const { error } = await supabase
+        .from("books")
+        .delete()
+        .eq("user_id", user.id)
+        .eq("google_book_id", bookId);
+      if (error) {
+        throw error;
+      }
+      setBookList(bookList.filter((book) => book.id !== bookId));
+    } catch (error) {
+      console.error("本棚のデータ削除に失敗しました:", error);
+      alert("本の削除に失敗しました");
+    }
+  };
 
   const onClickSearch = async () => {
     const data = await getBookData(title, author);
@@ -153,9 +186,23 @@ export const Bookshelf = () => {
         </Dialog>
 
         {bookList.map((book) => (
-          <div key={book.id}>
+          <Link
+            href={`/book/${book.id}`}
+            key={book.id}
+            className="relative group"
+          >
             <Image src={book.image} alt="book" width={300} height={400} />
-          </div>
+            <div className="absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <Button
+                variant="outline"
+                size="icon"
+                className="w-8 h-8 rounded-full"
+                onClick={() => onClickDelete(book.id)}
+              >
+                <XIcon className="w-4 h-4" />
+              </Button>
+            </div>
+          </Link>
         ))}
       </div>
     </div>
