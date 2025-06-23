@@ -1,42 +1,52 @@
+"use client";
+
 import React from "react";
 import { BookCardCarousel } from "../../molecules/book-card-carousel/BookCardCarousel";
 import { BookCardProps } from "@/components/atoms/bookCard";
-
-// APIを繋いで取得したデータをBookCardsに格納する
-const BookCards: BookCardProps[] = [
-  {
-    id: "1",
-    image: "https://m.media-amazon.com/images/I/51+hk62YF2L._SL500_.jpg",
-  },
-  { id: "2", image: "https://m.media-amazon.com/images/I/71ld5EcSVSL.jpg" },
-  { id: "3", image: "https://m.media-amazon.com/images/I/51076TYQYPL.jpg" },
-  {
-    id: "4",
-    image:
-      "https://tshop.r10s.jp/book/cabinet/9313/9784167919313_1_6.jpg?downsize=600:*",
-  },
-  { id: "5", image: "https://m.media-amazon.com/images/I/51RsDYXDIwL.jpg" },
-  {
-    id: "6",
-    image:
-      "https://www.kinokuniya.co.jp/images/goods/ar2/web/eimgdata/9987031323.jpg",
-  },
-  {
-    id: "7",
-    image: "https://m.media-amazon.com/images/I/31UzRHnwdlL._SX300_.jpg",
-  },
-  { id: "8", image: "https://m.media-amazon.com/images/I/71Lcp+A51gL.jpg" },
-  { id: "9", image: "https://m.media-amazon.com/images/I/61hSBs5nxWL.jpg" },
-];
+import { useState, useEffect } from "react";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { createClient } from "@/lib/supabase/client";
 
 export const RecentBooks = () => {
+  const { user } = useAuthContext();
+  const [recentBooks, setRecentBooks] = useState<BookCardProps[]>([]);
+  const supabase = createClient();
+
+  useEffect(() => {
+    const fetchRecentBooks = async () => {
+      if (user) {
+        const { data, error } = await supabase
+          .from("books")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false })
+          .limit(10);
+
+        if (error) {
+          console.error("最近読んだ本の取得に失敗しました:", error);
+        } else if (data) {
+          const formattedBooks = data.map((book) => ({
+            id: String(book.id),
+            image: book.image_url || "",
+          }));
+          setRecentBooks(formattedBooks);
+        }
+      }
+    };
+    fetchRecentBooks();
+  }, [user, supabase]);
+
+  if (recentBooks.length === 0) {
+    return null;
+  }
+
   return (
     <div className="flex flex-col gap-4 w-full">
       <h2 className="text-2xl font-bold mb-[16px] pl-[16px] pt-[16px]">
         recent books
       </h2>
       <div className="w-full">
-        <BookCardCarousel bookCards={BookCards} />
+        <BookCardCarousel bookCards={recentBooks} />
       </div>
     </div>
   );

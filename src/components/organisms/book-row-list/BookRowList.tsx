@@ -34,14 +34,18 @@ export const BookRowList = (props: BookRowListProps) => {
       description: item.volumeInfo.description,
     };
 
-    const { error } = await supabase.from("books").insert(BookDataToInsert);
+    const { data: newBookData, error } = await supabase
+      .from("books")
+      .insert(BookDataToInsert)
+      .select()
+      .single();
     if (error) {
       console.error("本棚のデータ登録に失敗しました:", error);
       return;
-    } else {
+    } else if (newBookData) {
       const newBook: BookCardProps = {
-        id: item.id,
-        image: item.volumeInfo.imageLinks?.thumbnail || "",
+        id: String(newBookData.id),
+        image: newBookData.image_url || "",
       };
       setBookList([newBook, ...bookList]);
       setSearchResult([]);
