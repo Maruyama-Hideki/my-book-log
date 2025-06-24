@@ -192,11 +192,11 @@ export const Bookshelf = () => {
             className="relative group"
           >
             <Image src={book.image} alt="book" width={300} height={400} />
-            <div className="absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="absolute top-0 right-[8px] p-2 opacity-0 group-hover:opacity-100 transition-opacity">
               <Button
-                variant="outline"
+                variant="ghost"
                 size="icon"
-                className="w-8 h-8 rounded-full"
+                className="w-8 h-8 rounded-full cursor-pointer bg-transparent"
                 onClick={() => onClickDelete(book.id)}
               >
                 <XIcon className="w-4 h-4" />

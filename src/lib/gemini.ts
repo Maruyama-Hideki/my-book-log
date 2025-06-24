@@ -72,8 +72,6 @@ export const askGemini = async (request: Request) => {
     const response = result.response;
     const text = response.text();
 
-    console.log("Gemini生レスポンス:", text);
-
     // レスポンステキストからJSONを抽出
     let jsonText = text;
 

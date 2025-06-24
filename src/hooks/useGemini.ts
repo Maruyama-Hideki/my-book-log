@@ -7,17 +7,6 @@ type RecommendataionRequest = {
   mood: string;
 };
 
-// type BookRecommendation = {
-//   title: string;
-//   author: string;
-//   publisher: string;
-//   summary: string;
-// };
-
-// type RecommendationResponse = {
-//   books: BookRecommendation[];
-// };
-
 export const useGemini = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
