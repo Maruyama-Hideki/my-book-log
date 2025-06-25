@@ -13,12 +13,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Menu } from "lucide-react";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { Avatar } from "@/components/atoms/Avatar";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
 
 export const Header = () => {
-  const { user } = useAuthContext();
-  console.log("user:", user);
+  const { user, profile } = useAuthContext();
   const { logout } = useAuth();
   const onClickLogout = () => {
     logout();
@@ -33,8 +32,12 @@ export const Header = () => {
       {user ? (
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-4">
-            <Avatar image="https://github.com/shadcn.png" />
-            <p>{user.email}</p>
+            <Avatar>
+              <AvatarImage
+                src={profile?.avatar_url || "https://placehold.jp/100x100.png"}
+              />
+            </Avatar>
+            <p>{profile?.username}</p>
           </div>
           <div className="flex items-center gap-4">
             <DropdownMenu>

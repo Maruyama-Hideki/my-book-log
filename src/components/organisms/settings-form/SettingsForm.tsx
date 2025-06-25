@@ -77,7 +77,7 @@ export const SettingsForm = () => {
           <Button
             type="submit"
             onClick={() => updateProfile()}
-            disabled={loading || uploading}
+            // disabled={loading || uploading}
           >
             {loading || uploading ? "保存中..." : "更新"}
           </Button>

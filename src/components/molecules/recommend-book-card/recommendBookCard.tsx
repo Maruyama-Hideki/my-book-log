@@ -20,7 +20,6 @@ export const RecommendBookCard = ({
   recommendation: string | null;
   urls: (string | null)[] | null;
 }) => {
-  console.log("urls:", urls);
   if (!recommendation) return null;
   try {
     const data: RecommendationResponse = JSON.parse(recommendation);

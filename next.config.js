@@ -27,10 +27,17 @@ const nextConfig = {
         protocol: "https",
         hostname: "tshop.r10s.jp",
       },
-      // ▼▼▼ 今回追加する設定 ▼▼▼
       {
         protocol: "http",
         hostname: "books.google.com",
+      },
+      {
+        protocol: "https",
+        hostname: "ytfihqaxqmmiwkxwilvs.supabase.co",
+      },
+      {
+        protocol: "https",
+        hostname: "placehold.jp",
       },
     ],
   },

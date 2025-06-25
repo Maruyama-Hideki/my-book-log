@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
 import { Database } from "@/types/database.types";
@@ -8,7 +8,7 @@ import { Database } from "@/types/database.types";
 type Profile = Database["public"]["Tables"]["users"]["Row"];
 
 export const useProfile = () => {
-  const { user } = useAuthContext();
+  const { user, profile, refreshProfile } = useAuthContext();
   const supabase = createClient();
 
   const [loading, setLoading] = useState(true);
@@ -17,39 +17,19 @@ export const useProfile = () => {
   const [birthday, setBirthday] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
-  const getProfile = useCallback(async () => {
-    if (!user) return;
-    try {
-      setLoading(true);
-      const { data, error, status } = await supabase
-        .from("users")
-        .select("*")
-        .eq("id", user.id)
-        .single();
-
-      if (error && status !== 406) throw error;
-
-      if (data) {
-        setUsername(data.username);
-        setBirthday(data.birthday);
-        setAvatarUrl(data.avatar_url);
-      }
-    } catch (error) {
-      alert("プロフィールの取得に失敗しました");
-      console.error("プロフィール取得エラー:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [user, supabase]);
-
   useEffect(() => {
-    getProfile();
-  }, [getProfile]);
+    if (profile) {
+      setUsername(profile.username);
+      setBirthday(profile.birthday);
+      setAvatarUrl(profile.avatar_url);
+    }
+  }, [profile]);
 
   const updateProfile = async (newAvatarUrl?: string) => {
     if (!user) return;
     try {
       setLoading(true);
+
       const updates: Partial<Profile> = {
         id: user.id,
         username,
@@ -60,6 +40,7 @@ export const useProfile = () => {
       const { error } = await supabase.from("users").upsert(updates);
       if (error) throw error;
       alert("プロフィールを更新しました");
+      await refreshProfile();
     } catch (error) {
       alert("プロフィールの更新に失敗しました");
       console.error("プロフィール更新エラー:", error);
@@ -73,7 +54,7 @@ export const useProfile = () => {
     try {
       setUploading(true);
       const file = e.target.files?.[0];
-      if (!file) return;
+      if (!file) throw new Error("ファイルが選択されていません");
       const fileExt = file.name.split(".").pop();
       const filePath = `${user.id}/${Math.random()}.${fileExt}`;
 
