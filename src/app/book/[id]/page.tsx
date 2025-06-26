@@ -34,6 +34,7 @@ const BookDetailPage = async ({ params }: BookDetailPageProps) => {
                 width={300}
                 height={450}
                 className="rounded-lg shadow-lg"
+                priority
               />
             )}
           </div>

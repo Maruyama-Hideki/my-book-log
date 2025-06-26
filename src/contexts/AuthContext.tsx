@@ -44,10 +44,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (error) throw error;
 
         const userProfile = data?.[0] || null;
-        console.log(
-          "Auth Provider: プロフィール取得を完了しました:",
-          userProfile
-        );
         setProfile(userProfile);
       } catch (error) {
         console.error("Auth Provider: fetchProfile内で予期せぬエラー:", error);
@@ -58,15 +54,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 
   useEffect(() => {
-    console.log("Auth Provider: useEffectが実行されました");
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
       const sessionUser = session?.user ?? null;
       setUser(sessionUser);
-      console.log("Auth Provider: ユーザー情報を更新しました:", sessionUser);
       await fetchProfile(sessionUser);
-      console.log("Auth Provider: プロフィールを更新しました:", profile);
       setIsLoading(false);
     });
 

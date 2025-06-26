@@ -45,10 +45,12 @@ export const Bookshelf = () => {
   const [searchResult, setSearchResult] = useState<GoogleBookItem[]>([]);
   const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false);
   const [bookList, setBookList] = useState<BookCardProps[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchUserBooks = async () => {
       if (user) {
+        setIsLoading(true);
         const { data, error } = await supabase
           .from("books")
           .select("*")
@@ -65,6 +67,7 @@ export const Bookshelf = () => {
             };
           });
           setBookList(formattedBooks);
+          setIsLoading(false);
         }
       }
     };
@@ -111,7 +114,9 @@ export const Bookshelf = () => {
 
   return (
     <div className="flex flex-col gap-4 w-[954px] mx-auto">
-      <h2 className="text-2xl font-bold mb-[16px] pl-[16px] pt-[16px]">本棚</h2>
+      <h2 className="text-2xl font-bold mb-[16px] pl-[16px] pt-[16px]">
+        {isLoading ? "本棚を読み込んでいます..." : "本棚"}
+      </h2>
       <div className="grid grid-cols-3 gap-[12px]">
         {/* 本を検索するモーダル */}
         <Dialog open={isSearchDialogOpen} onOpenChange={setIsSearchDialogOpen}>
@@ -191,7 +196,13 @@ export const Bookshelf = () => {
             key={book.id}
             className="relative group"
           >
-            <Image src={book.image} alt="book" width={300} height={400} />
+            <Image
+              src={book.image}
+              alt="book"
+              width={300}
+              height={400}
+              className="w-full h-auto object-cover"
+            />
             <div className="absolute top-0 right-[8px] p-2 opacity-0 group-hover:opacity-100 transition-opacity">
               <Button
                 variant="ghost"

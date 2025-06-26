@@ -7,6 +7,8 @@ import { Button } from "../../ui/button";
 import { PlusIcon } from "lucide-react";
 import { RecommendBookCard } from "../../molecules/recommend-book-card";
 import { getBookData } from "@/lib/gba";
+import { createClient } from "@/lib/supabase/client";
+import { useAuthContext } from "@/contexts/AuthContext";
 
 type RecommendationResponse = {
   books: Array<{
@@ -19,13 +21,39 @@ type RecommendationResponse = {
 };
 
 export const RecommendBooks = () => {
+  const { user } = useAuthContext();
+  const supabase = createClient();
   const { getRecommendation, recommendation, isLoading, error } = useGemini();
   const [mood, setMood] = useState("");
   const [recentBooks, setRecentBooks] = useState<string[]>([""]);
+  const [fetchedRecentBooks, setFetchedRecentBooks] = useState<string[]>([]);
   const [urls, setUrls] = useState<(string | null)[]>([]);
 
   useEffect(() => {
-    // recommendation が null または undefined の場合は何もしない
+    const fetchRecentBooks = async () => {
+      if (user) {
+        const { data, error } = await supabase
+          .from("books")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false })
+          .limit(10);
+
+        if (error) {
+          console.error("最近読んだ本の取得に失敗しました:", error);
+        } else if (data) {
+          const formattedBooks = data.map((book) => book.title);
+          setFetchedRecentBooks(formattedBooks);
+        }
+      }
+    };
+    fetchRecentBooks();
+  }, [user, supabase]);
+
+  console.log("recentBooks:", recentBooks);
+  console.log("fetchedRecentBooks:", fetchedRecentBooks);
+
+  useEffect(() => {
     if (!recommendation) {
       return;
     }
@@ -46,16 +74,14 @@ export const RecommendBooks = () => {
 
                 let imageUrl: string | null = null;
                 for (const item of gbaData.items) {
-                  // ★★★ この「?.」(オプショナルチェーン)がエラーを防ぐ重要な部分です ★★★
                   const foundUrl = item.volumeInfo?.imageLinks?.thumbnail;
                   if (foundUrl) {
                     imageUrl = foundUrl;
-                    break; // 最初に見つかった画像で決定
+                    break;
                   }
                 }
-                return imageUrl; // 画像が見つからなければ null が返る
+                return imageUrl;
               } catch (error) {
-                // getBookImage自体が失敗した場合
                 console.error(
                   `'${book.title}'の画像取得プロセスでエラー:`,
                   error
@@ -70,7 +96,6 @@ export const RecommendBooks = () => {
         console.error("recommendationのパースに失敗", e);
       }
     };
-
     fetchImages();
   }, [recommendation]);
 
@@ -99,7 +124,14 @@ export const RecommendBooks = () => {
         />
       </div>
       <div className="flex flex-col items-start w-full max-w-[400px]">
-        <p className="mb-[12px] text-lg">最近読んだ本</p>
+        <p className="text-lg">
+          最近読んだ本
+          <br />
+          (本棚に登録した本が自動的に適応されます)
+        </p>
+        <p className="mb-[12px] text-sm text-gray-500">
+          ※入力された本が本棚の本より優先されます。
+        </p>
         {recentBooks.map((book, index) => (
           <div key={index} className="flex gap-2 mb-2">
             <Input
@@ -123,7 +155,10 @@ export const RecommendBooks = () => {
         onClick={() =>
           getRecommendation({
             mood,
-            recentBooks: recentBooks.filter((book) => book.trim() !== ""),
+            recentBooks:
+              recentBooks.filter((book) => book.trim() !== "").length > 0
+                ? recentBooks.filter((book) => book.trim() !== "")
+                : fetchedRecentBooks.filter((book) => book.trim() !== ""),
           })
         }
         className="mt-[12px] font-semibold text-gray-500 hover:bg-black hover:text-white hover:border-black cursor-pointer"

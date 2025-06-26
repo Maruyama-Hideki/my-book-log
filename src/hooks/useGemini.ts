@@ -16,6 +16,12 @@ export const useGemini = () => {
     recentBooks,
     mood,
   }: RecommendataionRequest) => {
+    alert(
+      `=== useGemini.getRecommendation が呼ばれました ===\nrecentBooks: ${JSON.stringify(
+        recentBooks
+      )}\nmood: ${mood}`
+    );
+
     setIsLoading(true);
     setError(null);
 

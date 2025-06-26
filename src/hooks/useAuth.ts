@@ -39,7 +39,7 @@ export const useAuth = () => {
       password,
     });
     if (error) {
-      setError(error.message);
+      setError("メールアドレスかパスワードが間違っています");
     }
     router.refresh();
     setEmail("");

@@ -11,7 +11,7 @@ export const useProfile = () => {
   const { user, profile, refreshProfile } = useAuthContext();
   const supabase = createClient();
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [username, setUsername] = useState<string | null>(null);
   const [birthday, setBirthday] = useState<string | null>(null);
