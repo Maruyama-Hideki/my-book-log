@@ -6,7 +6,6 @@ type BookRecommendation = {
   author: string;
   publisher: string;
   summary: string;
-  ISBN: string[];
 };
 
 type RecommendationResponse = {
@@ -51,7 +50,6 @@ export const RecommendBookCard = ({
                   <div className="text-md text-gray-600">
                     <p>著者: {book.author}</p>
                     <p>出版社: {book.publisher}</p>
-                    <p>ISBN: {book.ISBN}</p>
                   </div>
                 </div>
                 <p className="text-md mt-auto pt-4">{book.summary}</p>

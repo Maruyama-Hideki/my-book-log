@@ -87,7 +87,7 @@ export const Bookshelf = () => {
         .from("books")
         .delete()
         .eq("user_id", user.id)
-        .eq("google_book_id", bookId);
+        .eq("id", bookId);
       if (error) {
         throw error;
       }
@@ -208,7 +208,11 @@ export const Bookshelf = () => {
                 variant="ghost"
                 size="icon"
                 className="w-8 h-8 rounded-full cursor-pointer bg-transparent"
-                onClick={() => onClickDelete(book.id)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onClickDelete(book.id);
+                }}
               >
                 <XIcon className="w-4 h-4" />
               </Button>

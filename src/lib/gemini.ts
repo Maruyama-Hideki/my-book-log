@@ -28,19 +28,19 @@ export const askGemini = async (request: Request) => {
       );
     }
 
-    const prompt = `最近読んだ本は「${reqBody.recentBooks.join(
-      "、"
-    )}」です。今の気分は「${
-      reqBody.mood
-    }」です。次に読むべきおすすめの本を3冊、以下のJSON形式で返してください。
+    const prompt = `あなたは、利用者の気持ちや状況に寄り添って本を推薦する、経験豊富な司書です。
+以下の情報を総合的に判断し、現在の利用者の心に最も響くであろう本を3冊、厳選して推薦してください。
 
-# 最重要ルールです。以下のルールは絶対に守ってください。
-- ISBNコードは、絶対に間違えないでください。架空の番号を生成してはいけません。
-- もし正確なISBNが不明、または自信がない場合は、その値を必ず null にしてください。
-- 制御文字（改行文字、タブ文字など）は絶対に含めないでください。
-- 必ず有効なJSON形式で返してください。
+# 利用者からの相談内容
+${reqBody.mood}
 
-必ず以下の形式で返してください。余分な説明やテキストは含めないでください：
+# 利用者が最近読んだ本（好みの参考にしてください）
+${reqBody.recentBooks.join("、")}
+
+# 最重要ルール（必ず厳守してください）
+- **JSON形式の徹底**: 必ず以下のJSON形式のみで出力してください。
+- **情報の正確性**: 書籍のタイトル、著者名、出版社名は実在するものを正確に記述してください。
+- **あらすじ**: 100文字程度で、本の魅力が伝わるように要約してください。
 
 {
   "books": [
@@ -49,21 +49,18 @@ export const askGemini = async (request: Request) => {
       "author": "著者名",
       "publisher": "出版社名",
       "summary": "あらすじ（100文字程度）",
-      "ISBN": "ISBN"
     },
     {
       "title": "本のタイトル",
       "author": "著者名",
       "publisher": "出版社名",
       "summary": "あらすじ（100文字程度）",
-      "ISBN": "ISBN"
     },
     {
       "title": "本のタイトル",
       "author": "著者名",
       "publisher": "出版社名",
       "summary": "あらすじ（100文字程度）",
-      "ISBN": "ISBN"
     }
   ]
 }`;
@@ -88,12 +85,9 @@ export const askGemini = async (request: Request) => {
       }
     }
 
-    // JSONとしてパースを試行
     try {
-      // 制御文字を除去してからパース
-      let cleanedJsonText = jsonText.trim().replace(/\r/g, ""); // キャリッジリターンのみ除去
+      let cleanedJsonText = jsonText.trim().replace(/\r/g, "");
 
-      // JSON文字列内の制御文字のみを除去（改行は保持）
       cleanedJsonText = cleanedJsonText.replace(
         /"([^"]*?)"/g,
         (match, content) => {
@@ -105,10 +99,9 @@ export const askGemini = async (request: Request) => {
         }
       );
 
-      // 最終的な制御文字除去（改行とタブは保持）
       cleanedJsonText = cleanedJsonText
         .replace(/[\u0000-\u0008\u000B-\u001F\u007F-\u009F]/g, "")
-        .replace(/\t/g, " "); // タブを空白に置換
+        .replace(/\t/g, " ");
 
       const jsonData = JSON.parse(cleanedJsonText);
       return NextResponse.json(jsonData);
