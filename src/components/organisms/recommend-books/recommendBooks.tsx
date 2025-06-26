@@ -50,9 +50,6 @@ export const RecommendBooks = () => {
     fetchRecentBooks();
   }, [user, supabase]);
 
-  console.log("recentBooks:", recentBooks);
-  console.log("fetchedRecentBooks:", fetchedRecentBooks);
-
   useEffect(() => {
     if (!recommendation) {
       return;

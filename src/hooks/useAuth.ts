@@ -48,8 +48,11 @@ export const useAuth = () => {
   };
 
   const logout = async () => {
-    await supabase.auth.signOut();
-    router.refresh();
+    const confirmed = window.confirm("ログアウトしますか？");
+    if (confirmed) {
+      await supabase.auth.signOut();
+      router.refresh();
+    }
   };
 
   return {

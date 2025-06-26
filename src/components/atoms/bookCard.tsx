@@ -13,8 +13,8 @@ export const BookCard = (props: BookCardProps) => {
       <Image
         src={props.image}
         alt="book"
-        width={300}
-        height={400}
+        width={200}
+        height={300}
         className="object-cover cursor-pointer"
       />
     </Link>

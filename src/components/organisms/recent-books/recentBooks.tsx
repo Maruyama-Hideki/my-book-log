@@ -41,12 +41,14 @@ export const RecentBooks = () => {
   }
 
   return (
-    <div className="flex flex-col gap-4 w-full">
-      <h2 className="text-2xl font-bold mb-[16px] pl-[16px] pt-[16px]">
-        recent books
-      </h2>
-      <div className="w-full">
-        <BookCardCarousel bookCards={recentBooks} />
+    <div className="w-full px-[32px]">
+      <div className="flex flex-col w-full border rounded-lg relative">
+        <h2 className="text-2xl font-bold text-gray-600 absolute -top-4 left-4 bg-white px-[16px]">
+          recent books
+        </h2>
+        <div className="w-full pt-[36px]">
+          <BookCardCarousel bookCards={recentBooks} />
+        </div>
       </div>
     </div>
   );
