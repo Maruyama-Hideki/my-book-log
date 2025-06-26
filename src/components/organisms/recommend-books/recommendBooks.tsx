@@ -126,6 +126,11 @@ export const RecommendBooks = () => {
           <br />
           (本棚に登録した本が自動的に適応されます)
         </p>
+        {!user && (
+          <p className="text-sm text-gray-500">
+            ※ログイン後、本棚を使用できます。
+          </p>
+        )}
         <p className="mb-[12px] text-sm text-gray-500">
           ※入力された本が本棚の本より優先されます。
         </p>
