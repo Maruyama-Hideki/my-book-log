@@ -22,8 +22,9 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const supabase = createClient();
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [supabase] = useState(() => createClient());
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -64,7 +65,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const sessionUser = session?.user ?? null;
       setUser(sessionUser);
       console.log("Auth Provider: ユーザー情報を更新しました:", sessionUser);
-      await fetchProfile(user);
+      await fetchProfile(sessionUser);
       console.log("Auth Provider: プロフィールを更新しました:", profile);
       setIsLoading(false);
     });

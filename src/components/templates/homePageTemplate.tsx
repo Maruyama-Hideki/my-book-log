@@ -7,8 +7,8 @@ export const HomePageTemplate = () => {
   return (
     <>
       <Header />
-      <RecentBooks />
       <RecommendBooks />
+      <RecentBooks />
     </>
   );
 };

@@ -20,14 +20,14 @@ export const SettingsForm = () => {
   } = useProfile();
 
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto mt-[24px]">
       <h1 className="text-2xl font-bold mb-[24px]">プロフィール設定</h1>
-      <div className="space-y-[32px>">
+      <div className="space-y-[32px]">
         <div>
           <Label htmlFor="avatar">プロフィール写真</Label>
           <div className="mt-2 flex items-center gap-4">
             <Image
-              src={avatarUrl || "/images/default-avatar.png"}
+              src={avatarUrl || "https://placehold.jp/100x100.png"}
               alt="プロフィール写真"
               width={100}
               height={100}
