@@ -1,7 +1,8 @@
 import React from "react";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
 
-type BookRecommendation = {
+export type BookRecommendation = {
   title: string;
   author: string;
   publisher: string;
@@ -15,9 +16,11 @@ type RecommendationResponse = {
 export const RecommendBookCard = ({
   recommendation,
   urls,
+  onClickAddToWishlist,
 }: {
   recommendation: string | null;
   urls: (string | null)[] | null;
+  onClickAddToWishlist: (book: BookRecommendation) => Promise<void>;
 }) => {
   if (!recommendation) return null;
   try {
@@ -53,6 +56,13 @@ export const RecommendBookCard = ({
                   </div>
                 </div>
                 <p className="text-md mt-auto pt-4">{book.summary}</p>
+                <Button
+                  onClick={() => onClickAddToWishlist(book)}
+                  className="mt-4 cursor-pointer"
+                  variant="secondary"
+                >
+                  読みたいリストに追加
+                </Button>
               </div>
             ))}
           </div>

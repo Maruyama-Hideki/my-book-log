@@ -9,15 +9,10 @@ import { RecommendBookCard } from "../../molecules/recommend-book-card";
 import { getBookData } from "@/lib/gba";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { type BookRecommendation } from "@/components/molecules/recommend-book-card";
 
 type RecommendationResponse = {
-  books: Array<{
-    ISBN: string;
-    title: string;
-    author: string;
-    publisher: string;
-    summary: string;
-  }>;
+  books: Array<BookRecommendation>;
 };
 
 export const RecommendBooks = () => {
@@ -29,6 +24,7 @@ export const RecommendBooks = () => {
   const [fetchedRecentBooks, setFetchedRecentBooks] = useState<string[]>([]);
   const [urls, setUrls] = useState<(string | null)[]>([]);
 
+  // 本棚にあるおすすめに使う本の取得
   useEffect(() => {
     const fetchRecentBooks = async () => {
       if (user) {
@@ -50,11 +46,11 @@ export const RecommendBooks = () => {
     fetchRecentBooks();
   }, [user, supabase]);
 
+  // recommendationの画像を取得
   useEffect(() => {
     if (!recommendation) {
       return;
     }
-
     const fetchImages = async () => {
       try {
         const data = JSON.parse(recommendation) as RecommendationResponse;
@@ -64,11 +60,9 @@ export const RecommendBooks = () => {
             data.books.map(async (book) => {
               try {
                 const gbaData = await getBookData(book.title, book.author);
-
                 if (!gbaData?.items) {
                   return null;
                 }
-
                 let imageUrl: string | null = null;
                 for (const item of gbaData.items) {
                   const foundUrl = item.volumeInfo?.imageLinks?.thumbnail;
@@ -96,6 +90,45 @@ export const RecommendBooks = () => {
     fetchImages();
   }, [recommendation]);
 
+  // 読みたいリストにおすすめされた本を追加
+  const onClickAddToWishlist = async (book: BookRecommendation) => {
+    if (!user) return;
+
+    try {
+      const googleBookData = await getBookData(book.title, book.author);
+      if (!googleBookData?.items || googleBookData.items.length === 0) return;
+      const bestMatch = googleBookData.items[0];
+
+      console.log("bestMatch:", bestMatch);
+
+      const bookDataToInsert = {
+        user_id: user.id,
+        title: bestMatch.volumeInfo.title,
+        author: bestMatch.volumeInfo.authors?.join(", "),
+        publisher: bestMatch.volumeInfo.publisher,
+        published_date: bestMatch.volumeInfo.publishedDate,
+        description: bestMatch.volumeInfo.description,
+        image_url: bestMatch.volumeInfo.imageLinks?.thumbnail,
+        google_book_id: bestMatch.id,
+        status: "wishlist",
+      };
+
+      const { error } = await supabase.from("books").insert(bookDataToInsert);
+      if (error) {
+        if (error.code === "23505") {
+          console.error("本がすでに本棚に登録されています");
+        } else {
+          throw error;
+        }
+      } else {
+        alert("本を読みたいリストに追加しました");
+      }
+    } catch (error) {
+      console.error("本の追加に失敗しました:", error);
+    }
+  };
+
+  // 本棚に登録する本の追加、削除、更新
   const addBook = () => {
     setRecentBooks([...recentBooks, ""]);
   };
@@ -175,7 +208,11 @@ export const RecommendBooks = () => {
           <p>{error}</p>
         </div>
       )}
-      <RecommendBookCard recommendation={recommendation} urls={urls} />
+      <RecommendBookCard
+        recommendation={recommendation}
+        urls={urls}
+        onClickAddToWishlist={onClickAddToWishlist}
+      />
     </div>
   );
 };

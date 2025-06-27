@@ -55,6 +55,7 @@ export const Bookshelf = () => {
           .from("books")
           .select("*")
           .eq("user_id", user.id)
+          .eq("status", "read")
           .order("created_at", { ascending: false });
 
         if (error) {
@@ -67,9 +68,9 @@ export const Bookshelf = () => {
             };
           });
           setBookList(formattedBooks);
-          setIsLoading(false);
         }
       }
+      setIsLoading(false);
     };
     fetchUserBooks();
   }, [user, supabase]);

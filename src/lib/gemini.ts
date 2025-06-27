@@ -1,11 +1,33 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 
 export const askGemini = async (request: Request) => {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
 
   if (!apiKey) {
     return new NextResponse("GOOGLE_API_KEY is not set", { status: 500 });
+  }
+
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  let exclusionList: { title: string; author: string }[] = [];
+  if (user) {
+    const { data: historyData, error: historyError } = await supabase
+      .from("recommendation_history")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(100);
+
+    if (historyError) {
+      console.error("読書履歴の取得に失敗しました:", historyError);
+    }
+
+    exclusionList = historyData ?? [];
   }
 
   const genAI = new GoogleGenerativeAI(apiKey);
@@ -28,6 +50,8 @@ export const askGemini = async (request: Request) => {
       );
     }
 
+    console.log("exclusionList:", exclusionList);
+
     const prompt = `あなたは、利用者の気持ちや状況に寄り添って本を推薦する、経験豊富な司書です。
 以下の情報を総合的に判断し、現在の利用者の心に最も響くであろう本を3冊、厳選して推薦してください。
 
@@ -36,6 +60,13 @@ ${reqBody.mood}
 
 # 利用者が最近読んだ本（好みの参考にしてください）
 ${reqBody.recentBooks.join("、")}
+
+# 除外リスト(以下の書籍は絶対に出力しないでください)
+${
+  exclusionList.length > 0
+    ? exclusionList.map((book) => `-${book.title}(${book.author})`).join("\n")
+    : "除外リストはありません"
+}
 
 # 最重要ルール（必ず厳守してください）
 - **JSON形式の徹底**: 必ず以下のJSON形式のみで出力してください。
@@ -87,7 +118,6 @@ ${reqBody.recentBooks.join("、")}
 
     try {
       let cleanedJsonText = jsonText.trim().replace(/\r/g, "");
-
       cleanedJsonText = cleanedJsonText.replace(
         /"([^"]*?)"/g,
         (match, content) => {
@@ -98,12 +128,27 @@ ${reqBody.recentBooks.join("、")}
           return `"${cleanedContent}"`;
         }
       );
-
       cleanedJsonText = cleanedJsonText
         .replace(/[\u0000-\u0008\u000B-\u001F\u007F-\u009F]/g, "")
         .replace(/\t/g, " ");
 
       const jsonData = JSON.parse(cleanedJsonText);
+
+      if (jsonData.books && Array.isArray(jsonData.books)) {
+        const newHistory = jsonData.books.map(
+          (book: { title: string; author: string }) => ({
+            user_id: user?.id,
+            title: book.title,
+            author: book.author,
+          })
+        );
+        const { error } = await supabase
+          .from("recommendation_history")
+          .insert(newHistory);
+        if (error) {
+          console.error("推薦履歴の保存に失敗しました:", error);
+        }
+      }
       return NextResponse.json(jsonData);
     } catch (error) {
       console.error("JSONパースエラー:", error);

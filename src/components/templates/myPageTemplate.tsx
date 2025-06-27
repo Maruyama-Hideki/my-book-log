@@ -1,12 +1,12 @@
 import React from "react";
 import { Header } from "../organisms/header";
-import { Bookshelf } from "../organisms/bookshelf";
+import { MyPageSwitch } from "../organisms/my-page-switch/MyPageSwitch";
 
 export const MyPageTemplate = () => {
   return (
     <div>
       <Header />
-      <Bookshelf />
+      <MyPageSwitch />
     </div>
   );
 };

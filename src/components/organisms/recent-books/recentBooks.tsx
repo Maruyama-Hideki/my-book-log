@@ -19,6 +19,7 @@ export const RecentBooks = () => {
           .from("books")
           .select("*")
           .eq("user_id", user.id)
+          .eq("status", "read")
           .order("created_at", { ascending: false })
           .limit(10);
 
@@ -35,6 +36,15 @@ export const RecentBooks = () => {
     };
     fetchRecentBooks();
   }, [user, supabase]);
+
+  useEffect(() => {
+    const whenLogout = () => {
+      if (!user) {
+        setRecentBooks([]);
+      }
+    };
+    whenLogout();
+  }, [user]);
 
   if (recentBooks.length === 0) {
     return null;
