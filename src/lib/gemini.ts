@@ -64,8 +64,10 @@ ${reqBody.recentBooks.join("、")}
 # 除外リスト(以下の書籍は絶対に出力しないでください)
 ${
   exclusionList.length > 0
-    ? exclusionList.map((book) => `-${book.title}(${book.author})`).join("\n")
-    : "除外リストはありません"
+    ? [...exclusionList, ...reqBody.recentBooks]
+        .map((book) => `-${book.title}(${book.author})`)
+        .join("\n")
+    : reqBody.recentBooks.join("、")
 }
 
 # 最重要ルール（必ず厳守してください）

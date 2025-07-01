@@ -26,6 +26,14 @@ export const BookCardCarousel = ({
 
   const [emblaApi, setEmblaApi] = useState<EmblaCarouselType>();
 
+  const [randomIndex] = useState(() => {
+    if (!bookCards || bookCards.length === 0) {
+      return 0;
+    } else {
+      return Math.floor(Math.random() * bookCards.length);
+    }
+  });
+
   const handleInteraction = useCallback(() => {
     if (!emblaApi) return;
     autoplayRef.current.stop();
@@ -51,6 +59,7 @@ export const BookCardCarousel = ({
           align: "start",
           loop: true,
           dragFree: true,
+          startIndex: randomIndex,
         }}
         className="w-full"
       >

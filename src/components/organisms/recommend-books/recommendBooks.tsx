@@ -15,9 +15,10 @@ type RecommendationResponse = {
   books: Array<BookRecommendation>;
 };
 
+const supabase = createClient();
+
 export const RecommendBooks = () => {
   const { user } = useAuthContext();
-  const supabase = createClient();
   const { getRecommendation, recommendation, isLoading, error } = useGemini();
   const [mood, setMood] = useState("");
   const [recentBooks, setRecentBooks] = useState<string[]>([""]);
@@ -44,7 +45,7 @@ export const RecommendBooks = () => {
       }
     };
     fetchRecentBooks();
-  }, [user, supabase]);
+  }, [user]);
 
   // recommendationの画像を取得
   useEffect(() => {

@@ -7,7 +7,7 @@ export const HomePageTemplate = () => {
   return (
     <>
       <Header />
-      <div className="flex flex-col gap-[64px]">
+      <div className="flex flex-col gap-[100px]">
         <RecommendBooks />
         <RecentBooks />
       </div>

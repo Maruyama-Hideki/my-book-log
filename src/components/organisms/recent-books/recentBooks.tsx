@@ -7,10 +7,11 @@ import { useState, useEffect } from "react";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
 
+const supabase = createClient();
+
 export const RecentBooks = () => {
   const { user } = useAuthContext();
   const [recentBooks, setRecentBooks] = useState<BookCardProps[]>([]);
-  const supabase = createClient();
 
   useEffect(() => {
     const fetchRecentBooks = async () => {
@@ -35,7 +36,7 @@ export const RecentBooks = () => {
       }
     };
     fetchRecentBooks();
-  }, [user, supabase]);
+  }, [user]);
 
   useEffect(() => {
     const whenLogout = () => {

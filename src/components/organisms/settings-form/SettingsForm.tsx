@@ -20,7 +20,7 @@ export const SettingsForm = () => {
   } = useProfile();
 
   return (
-    <div className="container mx-auto mt-[24px]">
+    <div className="w-[954px] mx-auto mt-[24px]">
       <h1 className="text-2xl font-bold mb-[24px]">プロフィール設定</h1>
       <div className="space-y-[32px]">
         <div>
@@ -31,7 +31,8 @@ export const SettingsForm = () => {
               alt="プロフィール写真"
               width={100}
               height={100}
-              className="rounded-full object-cover bg-gray-200"
+              className="w-[100px] h-[100px] rounded-full object-cover bg-gray-200"
+              priority
             />
             <div>
               <Button asChild>

@@ -36,9 +36,10 @@ export type GoogleBookItem = {
   };
 };
 
+const supabase = createClient();
+
 export const Bookshelf = () => {
   const { user } = useAuthContext();
-  const supabase = createClient();
 
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
@@ -49,31 +50,36 @@ export const Bookshelf = () => {
 
   useEffect(() => {
     const fetchUserBooks = async () => {
-      if (user) {
-        setIsLoading(true);
-        const { data, error } = await supabase
-          .from("books")
-          .select("*")
-          .eq("user_id", user.id)
-          .eq("status", "read")
-          .order("created_at", { ascending: false });
+      setIsLoading(true);
+      try {
+        if (user) {
+          const { data, error } = await supabase
+            .from("books")
+            .select("*")
+            .eq("user_id", user.id)
+            .eq("status", "read")
+            .order("created_at", { ascending: false });
 
-        if (error) {
-          console.error("本棚のデータ取得に失敗しました:", error);
-        } else if (data) {
-          const formattedBooks = data.map((book) => {
-            return {
-              id: String(book.id),
-              image: book.image_url || "",
-            };
-          });
-          setBookList(formattedBooks);
+          if (error) {
+            console.error("本棚のデータ取得に失敗しました:", error);
+          } else if (data) {
+            const formattedBooks = data.map((book) => {
+              return {
+                id: String(book.id),
+                image: book.image_url || "",
+              };
+            });
+            setBookList(formattedBooks);
+          }
         }
+      } catch (error) {
+        console.error("本棚のデータ取得に失敗しました:", error);
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
     fetchUserBooks();
-  }, [user, supabase]);
+  }, [user]);
 
   const onClickDelete = async (bookId: string) => {
     if (!user) {
@@ -118,12 +124,12 @@ export const Bookshelf = () => {
       <h2 className="text-2xl font-bold mb-[16px] pl-[16px] pt-[16px]">
         {isLoading ? "本棚を読み込んでいます..." : "本棚"}
       </h2>
-      <div className="grid grid-cols-3 gap-[12px]">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
         {/* 本を検索するモーダル */}
         <Dialog open={isSearchDialogOpen} onOpenChange={setIsSearchDialogOpen}>
           <form>
             <DialogTrigger asChild>
-              <div className="flex items-center justify-center w-[300px] h-[400px] bg-gray-100 border-4 border-dashed border-gray-200 rounded-lg">
+              <div className="flex items-center justify-center w-[200px] h-[300px] bg-gray-100 border-4 border-dashed border-gray-200 rounded-lg">
                 <PlusIcon className="w-10 h-10" />
               </div>
             </DialogTrigger>
@@ -200,9 +206,9 @@ export const Bookshelf = () => {
             <Image
               src={book.image}
               alt="book"
-              width={300}
-              height={400}
-              className="w-full h-auto object-cover"
+              width={200}
+              height={300}
+              className="w-full h-full object-cover"
             />
             <div className="absolute top-0 right-[8px] p-2 opacity-0 group-hover:opacity-100 transition-opacity">
               <Button

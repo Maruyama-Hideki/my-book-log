@@ -33,7 +33,7 @@ const BookDetailPage = async ({ params }: BookDetailPageProps) => {
                 alt={book.title || "本の表紙"}
                 width={300}
                 height={450}
-                className="rounded-lg shadow-lg"
+                className=" shadow-lg"
                 priority
               />
             )}

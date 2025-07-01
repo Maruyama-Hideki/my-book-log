@@ -3,14 +3,20 @@
 import { useEffect, useState } from "react";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
-import { BookCardProps } from "@/components/atoms/bookCard";
 import Link from "next/link";
 import Image from "next/image";
 
+type WishListBookCardProps = {
+  id: string;
+  title: string;
+  image: string | null;
+};
+
+const supabase = createClient();
+
 export const WishlistBooks = () => {
-  const supabase = createClient();
   const { user } = useAuthContext();
-  const [books, setBooks] = useState<BookCardProps[]>([]);
+  const [books, setBooks] = useState<WishListBookCardProps[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -27,6 +33,7 @@ export const WishlistBooks = () => {
         if (data) {
           const formattedBooks = data.map((book) => ({
             id: String(book.id),
+            title: book.title,
             image: book.image_url || null,
           }));
           setBooks(formattedBooks);
@@ -38,7 +45,7 @@ export const WishlistBooks = () => {
       setIsLoading(false);
     };
     fetchWishlistBooks();
-  }, [user, supabase]);
+  }, [user]);
 
   return (
     <div className="flex flex-col gap-4 w-[954px] mx-auto">
@@ -56,8 +63,12 @@ export const WishlistBooks = () => {
                 height={300}
               />
             ) : (
-              <div className="flex justify-center items-center w-[200px] h-[300px] bg-gray-200">
-                画像が見つかりません
+              <div className="flex justify-center items-center w-[200px] h-[300px] px-4 bg-gray-200 text-gray-600">
+                <div className="flex flex-col items-center justify-center border-l-4 border-gray-300">
+                  <div className="flex items-center justify-center w-[176px] h-[280px] ml-2 border border-gray-400 text-center ">
+                    {book.title}
+                  </div>
+                </div>
               </div>
             )}
           </Link>

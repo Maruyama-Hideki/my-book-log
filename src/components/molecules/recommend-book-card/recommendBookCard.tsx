@@ -28,7 +28,7 @@ export const RecommendBookCard = ({
 
     if (data.books && Array.isArray(data.books)) {
       return (
-        <div className="w-[1024px] space-y-4 mb-[240px]">
+        <div className="w-[1024px] space-y-4">
           <h3 className="text-lg font-semibold">おすすめの本</h3>
           <div className="flex gap-4 items-stretch">
             {data.books.map((book, index) => (
@@ -39,7 +39,7 @@ export const RecommendBookCard = ({
                     alt={book.title}
                     width={200}
                     height={300}
-                    className="w-full h-[400px] object-cover mb-4"
+                    className="w-full h-[400px] object-cover mb-4 shadow-lg"
                   />
                 ) : (
                   <div className="flex items-center justify-center w-full h-[400px] bg-gray-100 mb-4">
