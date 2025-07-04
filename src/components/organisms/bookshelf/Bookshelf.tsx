@@ -48,7 +48,12 @@ export const Bookshelf = () => {
   const [bookList, setBookList] = useState<BookCardProps[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  //本棚のデータを取得する関数
   useEffect(() => {
+    if (!user) {
+      setBookList([]);
+      return;
+    }
     const fetchUserBooks = async () => {
       setIsLoading(true);
       try {
@@ -62,6 +67,7 @@ export const Bookshelf = () => {
 
           if (error) {
             console.error("本棚のデータ取得に失敗しました:", error);
+            setBookList([]);
           } else if (data) {
             const formattedBooks = data.map((book) => {
               return {
@@ -105,9 +111,13 @@ export const Bookshelf = () => {
     }
   };
 
+  //本棚に追加する本を検索する関数
   const onClickSearch = async () => {
+    if (!title && !author) {
+      alert("タイトルまたは著者名を入力してください");
+      return;
+    }
     const data = await getBookData(title, author);
-    console.log(data);
     if (data.items) {
       setSearchResult(data.items);
       setIsSearchDialogOpen(false);
@@ -129,7 +139,7 @@ export const Bookshelf = () => {
         <Dialog open={isSearchDialogOpen} onOpenChange={setIsSearchDialogOpen}>
           <form>
             <DialogTrigger asChild>
-              <div className="flex items-center justify-center w-[200px] h-[300px] bg-gray-100 border-4 border-dashed border-gray-200 rounded-lg">
+              <div className="flex items-center justify-center w-full h-full aspect-[2/3] bg-gray-100 border-4 border-dashed border-gray-200 rounded-lg">
                 <PlusIcon className="w-10 h-10" />
               </div>
             </DialogTrigger>

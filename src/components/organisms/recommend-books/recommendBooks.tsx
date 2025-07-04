@@ -129,7 +129,7 @@ export const RecommendBooks = () => {
     }
   };
 
-  // 本棚に登録する本の追加、削除、更新
+  // 最近読んだ本に登録する本の追加、削除、更新
   const addBook = () => {
     setRecentBooks([...recentBooks, ""]);
   };

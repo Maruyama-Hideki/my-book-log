@@ -5,6 +5,7 @@ import { useAuthContext } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import Image from "next/image";
+import { XIcon } from "lucide-react";
 
 type WishListBookCardProps = {
   id: string;
@@ -18,6 +19,31 @@ export const WishlistBooks = () => {
   const { user } = useAuthContext();
   const [books, setBooks] = useState<WishListBookCardProps[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const onClickDelete = async (bookId: string) => {
+    if (!user) return;
+
+    if (!window.confirm("読みたい本リストから削除しますか？")) return;
+
+    try {
+      const { error } = await supabase
+        .from("books")
+        .select("*")
+        .eq("id", bookId)
+        .eq("user_id", user.id)
+        .eq("status", "wishlist")
+        .single();
+
+      if (error) {
+        console.error("読みたい本の削除に失敗しました:", error);
+      }
+
+      setBooks(books.filter((book) => book.id !== bookId));
+    } catch (error) {
+      console.error("読みたい本の削除に失敗しました:", error);
+      alert("読みたい本の削除に失敗しました");
+    }
+  };
 
   useEffect(() => {
     const fetchWishlistBooks = async () => {
@@ -54,24 +80,49 @@ export const WishlistBooks = () => {
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
         {books.map((book) => (
-          <Link href={`/book/${book.id}`} key={book.id}>
-            {book.image ? (
-              <Image
-                src={book.image}
-                alt="book image"
-                width={200}
-                height={300}
-              />
-            ) : (
-              <div className="flex justify-center items-center w-[200px] h-[300px] px-4 bg-gray-200 text-gray-600">
-                <div className="flex flex-col items-center justify-center border-l-4 border-gray-300">
-                  <div className="flex items-center justify-center w-[176px] h-[280px] ml-2 border border-gray-400 text-center ">
-                    {book.title}
-                  </div>
+          <div key={book.id} className="relative group">
+            <Link href={`/book/${book.id}`}>
+              {book.image ? (
+                <div className="relative">
+                  <Image
+                    src={book.image}
+                    alt="book image"
+                    width={200}
+                    height={300}
+                    className="w-[200px] h-[300px]"
+                  />
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      onClickDelete(book.id);
+                    }}
+                    className="absolute top-1 right-8 bg-transparent rounded-full p-1 hidden group-hover:block"
+                  >
+                    <XIcon className="w-4 h-4" />
+                  </button>
                 </div>
-              </div>
-            )}
-          </Link>
+              ) : (
+                <div className="relative flex justify-center items-center w-[200px] h-[300px] px-4 bg-gray-200 text-gray-600">
+                  <div className="flex flex-col items-center justify-center border-l-4 border-gray-300">
+                    <div className="flex items-center justify-center w-[176px] h-[280px] ml-2 border border-gray-400 text-center">
+                      {book.title}
+                    </div>
+                  </div>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      onClickDelete(book.id);
+                    }}
+                    className="absolute top-2 right-2 bg-transparent rounded-full hidden group-hover:block"
+                  >
+                    <XIcon className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+            </Link>
+          </div>
         ))}
       </div>
     </div>
