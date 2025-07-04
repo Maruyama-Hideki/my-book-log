@@ -1,6 +1,6 @@
 import React from "react";
-import { Header } from "../organisms/header";
-import { SignUpForm } from "../organisms/sign-up-form/SignUpForm";
+import { Header } from "@/components/organisms/header";
+import { SignUpForm } from "@/components/organisms/sign-up-form/SignUpForm";
 
 export const SignUpFormTemplate = () => {
   return (

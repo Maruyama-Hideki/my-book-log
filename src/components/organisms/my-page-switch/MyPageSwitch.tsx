@@ -1,5 +1,5 @@
-import { Bookshelf } from "../bookshelf/Bookshelf";
-import { WishlistBooks } from "../wishlist-books/WishlistBooks";
+import { Bookshelf } from "@/components/organisms/bookshelf/Bookshelf";
+import { WishlistBooks } from "@/components/organisms/wishlist-books/WishlistBooks";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const MyPageSwitch = () => {

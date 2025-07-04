@@ -1,6 +1,6 @@
 import React from "react";
-import { Header } from "../organisms/header";
-import { MyPageSwitch } from "../organisms/my-page-switch/MyPageSwitch";
+import { Header } from "@/components/organisms/header";
+import { MyPageSwitch } from "@/components/organisms/my-page-switch/MyPageSwitch";
 
 export const MyPageTemplate = () => {
   return (

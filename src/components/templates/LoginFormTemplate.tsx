@@ -1,6 +1,6 @@
 import React from "react";
-import { Header } from "../organisms/header";
-import { LoginForm } from "../organisms/login-form/LoginForm";
+import { Header } from "@/components/organisms/header";
+import { LoginForm } from "@/components/organisms/login-form/LoginForm";
 
 export const LoginFormTemplate = () => {
   return (

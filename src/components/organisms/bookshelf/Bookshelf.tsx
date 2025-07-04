@@ -17,7 +17,7 @@ import { PlusIcon, XIcon } from "lucide-react";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import { getBookData } from "@/lib/gba";
-import { BookRowList } from "../book-row-list";
+import { BookRowList } from "@/components/organisms/book-row-list";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";

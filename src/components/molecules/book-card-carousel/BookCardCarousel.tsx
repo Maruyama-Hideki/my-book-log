@@ -8,7 +8,7 @@ import {
   // CarouselNext,
   // CarouselPrevious,
 } from "../../ui/carousel";
-import { BookCard, BookCardProps } from "../../atoms/bookCard";
+import { BookCard, BookCardProps } from "@/components/atoms/bookCard";
 import Autoplay from "embla-carousel-autoplay";
 import { type EmblaCarouselType } from "embla-carousel";
 

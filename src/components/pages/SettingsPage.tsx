@@ -1,5 +1,5 @@
 import React from "react";
-import { SettingsPageTemplate } from "../templates/SettingsPageTemplate";
+import { SettingsPageTemplate } from "@/components/templates/SettingsPageTemplate";
 
 export const SettingsPage = () => {
   return <SettingsPageTemplate />;

@@ -1,5 +1,5 @@
 import { SettingsForm } from "@/components/organisms/settings-form";
-import { Header } from "../organisms/header";
+import { Header } from "@/components/organisms/header";
 
 export const SettingsPageTemplate = () => {
   return (
