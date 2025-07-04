@@ -7,9 +7,13 @@ type BookDetailPageProps = {
   params: {
     id: string;
   };
+  searchParams: { [key: string]: string | string[] | undefined };
 };
 
-const BookDetailPage = async ({ params }: BookDetailPageProps) => {
+const BookDetailPage = async ({
+  params,
+  searchParams,
+}: BookDetailPageProps) => {
   const supabase = createClient();
   const { data: book } = await supabase
     .from("books")
