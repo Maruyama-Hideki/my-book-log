@@ -1,13 +1,7 @@
 "use client";
 
 import React, { useCallback, useRef, useState, useEffect } from "react";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  // CarouselNext,
-  // CarouselPrevious,
-} from "../../ui/carousel";
+import { Carousel, CarouselContent, CarouselItem } from "../../ui/carousel";
 import { BookCard, BookCardProps } from "@/components/atoms/bookCard";
 import Autoplay from "embla-carousel-autoplay";
 import { type EmblaCarouselType } from "embla-carousel";
@@ -73,10 +67,6 @@ export const BookCardCarousel = ({
             </CarouselItem>
           ))}
         </CarouselContent>
-        {/* <div className="flex justify-center gap-4 mt-4 absolute left-2">
-          <CarouselPrevious className="static translate-y-0" variant="ghost" />
-          <CarouselNext className="static translate-y-0" variant="ghost" />
-        </div> */}
       </Carousel>
     </div>
   );
