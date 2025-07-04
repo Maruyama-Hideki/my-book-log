@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
 export const askGemini = async (request: Request) => {
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
+  const apiKey = process.env.GOOGLE_API_KEY;
 
   if (!apiKey) {
     return new NextResponse("GOOGLE_API_KEY is not set", { status: 500 });
@@ -49,8 +49,6 @@ export const askGemini = async (request: Request) => {
         { status: 400 }
       );
     }
-
-    console.log("exclusionList:", exclusionList);
 
     const prompt = `あなたは、利用者の気持ちや状況に寄り添って本を推薦する、経験豊富な司書です。
 以下の情報を総合的に判断し、現在の利用者の心に最も響くであろう本を3冊、厳選して推薦してください。
