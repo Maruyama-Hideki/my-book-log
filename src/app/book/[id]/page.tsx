@@ -14,6 +14,8 @@ const BookDetailPage = async ({
   params,
   searchParams,
 }: BookDetailPageProps) => {
+  const searchParamsData = await searchParams;
+  console.log(searchParamsData);
   const supabase = createClient();
   const { data: book } = await supabase
     .from("books")
