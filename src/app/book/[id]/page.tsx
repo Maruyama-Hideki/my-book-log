@@ -4,9 +4,7 @@ import Image from "next/image";
 import { Header } from "@/components/organisms/header";
 
 type BookDetailPageProps = {
-  params: {
-    id: string;
-  };
+  params: Promise<{ id: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
@@ -14,11 +12,12 @@ const BookDetailPage = async ({
   params,
   searchParams,
 }: BookDetailPageProps) => {
+  const paramsData = await params;
   const supabase = createClient();
   const { data: book } = await supabase
     .from("books")
     .select("*")
-    .eq("id", params.id)
+    .eq("id", paramsData.id)
     .single();
 
   if (!book) {
