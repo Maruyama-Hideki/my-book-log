@@ -17,6 +17,7 @@ export const SettingsForm = () => {
     uploadAvatar,
     loading,
     uploading,
+    validationError,
   } = useProfile();
 
   return (
@@ -64,6 +65,11 @@ export const SettingsForm = () => {
             onChange={(e) => setUsername(e.target.value)}
             disabled={loading}
           />
+          {validationError?.username && (
+            <p className="text-sm text-red-500">
+              {validationError.username[0]}
+            </p>
+          )}
         </div>
         <div className="grid gap-2">
           <Label htmlFor="birthDay">誕生日(任意)</Label>
@@ -74,6 +80,11 @@ export const SettingsForm = () => {
             onChange={(e) => setBirthday(e.target.value)}
             disabled={loading}
           />
+          {validationError?.birthday && (
+            <p className="text-sm text-gray-500">
+              {validationError.birthday[0]}
+            </p>
+          )}
         </div>
         <div>
           <Button

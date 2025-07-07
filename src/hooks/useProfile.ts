@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
 import { Database } from "@/types/database.types";
+import { z } from "zod";
+import { ProfileSchema } from "@/lib/schema";
 
 type Profile = Database["public"]["Tables"]["users"]["Row"];
 
@@ -16,6 +18,9 @@ export const useProfile = () => {
   const [username, setUsername] = useState<string | null>(null);
   const [birthday, setBirthday] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [validationError, setValidationError] = useState<
+    z.ZodError["formErrors"]["fieldErrors"] | null
+  >(null);
 
   useEffect(() => {
     if (profile) {
@@ -27,6 +32,16 @@ export const useProfile = () => {
 
   const updateProfile = async (newAvatarUrl?: string) => {
     if (!user) return;
+
+    const result = ProfileSchema.safeParse({ username, birthday });
+    if (!result.success) {
+      const fieldErrors = result.error.flatten().fieldErrors;
+      setValidationError(fieldErrors);
+      return;
+    }
+
+    setValidationError(null);
+
     try {
       setLoading(true);
 
@@ -88,5 +103,6 @@ export const useProfile = () => {
     setBirthday,
     updateProfile,
     uploadAvatar,
+    validationError,
   };
 };
