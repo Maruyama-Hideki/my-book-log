@@ -29,7 +29,8 @@ export const RecentBooks = () => {
         } else if (data) {
           const formattedBooks = data.map((book) => ({
             id: String(book.id),
-            image: book.image_url || "",
+            image: book.image_url || null,
+            title: book.title || "",
           }));
           setRecentBooks(formattedBooks);
         }

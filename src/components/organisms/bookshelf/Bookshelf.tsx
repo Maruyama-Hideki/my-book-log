@@ -72,7 +72,8 @@ export const Bookshelf = () => {
             const formattedBooks = data.map((book) => {
               return {
                 id: String(book.id),
-                image: book.image_url || "",
+                image: book.image_url || null,
+                title: book.title || "",
               };
             });
             setBookList(formattedBooks);
@@ -206,34 +207,58 @@ export const Bookshelf = () => {
             </div>
           </DialogContent>
         </Dialog>
-
+        {/* 本棚に追加した本を表示する */}
         {bookList.map((book) => (
           <Link
             href={`/book/${book.id}`}
             key={book.id}
             className="relative group"
           >
-            <Image
-              src={book.image}
-              alt="book"
-              width={200}
-              height={300}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute top-0 right-[8px] p-2 opacity-0 group-hover:opacity-100 transition-opacity">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="w-8 h-8 rounded-full cursor-pointer bg-transparent"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  onClickDelete(book.id);
-                }}
-              >
-                <XIcon className="w-4 h-4" />
-              </Button>
-            </div>
+            {book.image ? (
+              <>
+                <Image
+                  src={book.image}
+                  alt="book"
+                  width={200}
+                  height={300}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute top-0 right-[8px] p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="w-8 h-8 rounded-full cursor-pointer bg-transparent"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      onClickDelete(book.id);
+                    }}
+                  >
+                    <XIcon className="w-4 h-4" />
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="relative flex justify-center items-center w-[200px] h-[300px] px-4 bg-gray-200 text-gray-600">
+                  <div className="flex flex-col items-center justify-center border-l-4 border-gray-300">
+                    <div className="flex items-center justify-center w-[176px] h-[280px] ml-2 border border-gray-400 text-center">
+                      {book.title}
+                    </div>
+                  </div>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      onClickDelete(book.id);
+                    }}
+                    className="absolute top-2 right-2 bg-transparent rounded-full hidden group-hover:block"
+                  >
+                    <XIcon className="w-4 h-4" />
+                  </button>
+                </div>
+              </>
+            )}
           </Link>
         ))}
       </div>

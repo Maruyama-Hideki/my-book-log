@@ -5,6 +5,7 @@ import Link from "next/link";
 export type BookCardProps = {
   id: string;
   image: string;
+  title: string;
 };
 
 export const BookCard = (props: BookCardProps) => {

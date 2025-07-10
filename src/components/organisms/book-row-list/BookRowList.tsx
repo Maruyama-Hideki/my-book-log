@@ -44,8 +44,9 @@ export const BookRowList = (props: BookRowListProps) => {
       return;
     } else if (newBookData) {
       const newBook: BookCardProps = {
+        title: newBookData.title,
         id: String(newBookData.id),
-        image: newBookData.image_url || "",
+        image: newBookData.image_url || null,
       };
       setBookList([newBook, ...bookList]);
       setSearchResult([]);
