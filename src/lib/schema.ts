@@ -18,7 +18,8 @@ export const ProfileSchema = z.object({
   avatar_url: z
     .string()
     .url({ message: "有効なURLを入力してください" })
-    .nullable(),
+    .nullable()
+    .optional(),
 });
 
 export type ProfileSchema = z.infer<typeof ProfileSchema>;
