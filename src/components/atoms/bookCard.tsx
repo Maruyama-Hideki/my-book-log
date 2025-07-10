@@ -9,10 +9,11 @@ export type BookCardProps = {
 };
 
 export const BookCard = (props: BookCardProps) => {
+  const imageUrl = props.image ? props.image : "/images/no-image.png";
   return (
     <Link href={`/book/${props.id}`}>
       <Image
-        src={props.image}
+        src={imageUrl}
         alt="book"
         width={200}
         height={300}
