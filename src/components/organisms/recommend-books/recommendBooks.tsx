@@ -8,8 +8,9 @@ import { PlusIcon } from "lucide-react";
 import { RecommendBookCard } from "../../molecules/recommend-book-card";
 import { getBookData } from "@/lib/gba";
 import { createClient } from "@/lib/supabase/client";
-import { useAuthContext } from "@/contexts/AuthContext";
 import { type BookRecommendation } from "@/components/molecules/recommend-book-card";
+import { useAtomValue } from "jotai";
+import { userAtom } from "@/lib/atoms";
 
 type RecommendationResponse = {
   books: Array<BookRecommendation>;
@@ -18,7 +19,7 @@ type RecommendationResponse = {
 const supabase = createClient();
 
 export const RecommendBooks = () => {
-  const { user } = useAuthContext();
+  const user = useAtomValue(userAtom);
   const { getRecommendation, recommendation, isLoading, error } = useGemini();
   const [mood, setMood] = useState("");
   const [recentBooks, setRecentBooks] = useState<string[]>([""]);

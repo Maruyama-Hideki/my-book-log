@@ -12,16 +12,26 @@ import {
   DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
 import { Menu } from "lucide-react";
-import { useAuthContext } from "@/contexts/AuthContext";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
+import { useAtomValue } from "jotai";
+import { userAtom, profileAtom, isLoadingAtom } from "@/lib/atoms";
 
 export const Header = () => {
-  const { user, profile } = useAuthContext();
+  const user = useAtomValue(userAtom);
+  const profile = useAtomValue(profileAtom);
+  const isLoading = useAtomValue(isLoadingAtom);
+
   const { logout } = useAuth();
+
   const onClickLogout = () => {
     logout();
   };
+
+  if (isLoading) {
+    return <header className="w-full h-20 border-b" />;
+  }
+
   return (
     <header className="w-full h-20 border-b flex items-center justify-between px-4">
       <div className="flex items-center gap-4 pl-[24px]">
@@ -35,6 +45,7 @@ export const Header = () => {
             <Avatar>
               <AvatarImage
                 src={profile?.avatar_url || "https://placehold.jp/100x100.png"}
+                alt="avatar"
               />
             </Avatar>
             <p>{profile?.username}</p>

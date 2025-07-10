@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAuthContext } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
+import { useAtomValue } from "jotai";
+import { userAtom } from "@/lib/atoms";
 import Link from "next/link";
 import Image from "next/image";
 import { XIcon } from "lucide-react";
@@ -16,7 +17,7 @@ type WishListBookCardProps = {
 const supabase = createClient();
 
 export const WishlistBooks = () => {
-  const { user } = useAuthContext();
+  const user = useAtomValue(userAtom);
   const [books, setBooks] = useState<WishListBookCardProps[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 

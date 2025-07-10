@@ -1,17 +1,24 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useAuthContext } from "@/contexts/AuthContext";
-import { createClient } from "@/lib/supabase/client";
 import { Database } from "@/types/database.types";
 import { z } from "zod";
 import { ProfileSchema } from "@/lib/schema";
+import { useAtomValue, useSetAtom } from "jotai";
+import {
+  userAtom,
+  profileAtom,
+  refreshProfileAtom,
+  supabaseAtom,
+} from "@/lib/atoms";
 
 type Profile = Database["public"]["Tables"]["users"]["Row"];
 
 export const useProfile = () => {
-  const { user, profile, refreshProfile } = useAuthContext();
-  const supabase = createClient();
+  const user = useAtomValue(userAtom);
+  const profile = useAtomValue(profileAtom);
+  const refreshProfile = useSetAtom(refreshProfileAtom);
+  const supabase = useAtomValue(supabaseAtom);
 
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);

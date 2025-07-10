@@ -18,8 +18,9 @@ import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import { getBookData } from "@/lib/gba";
 import { BookRowList } from "@/components/organisms/book-row-list";
-import { useAuthContext } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
+import { useAtomValue } from "jotai";
+import { userAtom } from "@/lib/atoms";
 import Link from "next/link";
 
 export type GoogleBookItem = {
@@ -39,7 +40,7 @@ export type GoogleBookItem = {
 const supabase = createClient();
 
 export const Bookshelf = () => {
-  const { user } = useAuthContext();
+  const user = useAtomValue(userAtom);
 
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");

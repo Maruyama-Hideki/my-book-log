@@ -9,7 +9,9 @@ export type BookCardProps = {
 };
 
 export const BookCard = (props: BookCardProps) => {
-  const imageUrl = props.image ? props.image : "/images/no-image.png";
+  const imageUrl = props.image
+    ? props.image
+    : "https://placehold.jp/184x260.png";
   return (
     <Link href={`/book/${props.id}`}>
       <Image
