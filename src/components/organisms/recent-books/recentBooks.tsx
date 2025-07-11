@@ -4,13 +4,14 @@ import React from "react";
 import { BookCardCarousel } from "../../molecules/book-card-carousel/BookCardCarousel";
 import { BookCardProps } from "@/components/atoms/bookCard";
 import { useState, useEffect } from "react";
-import { useAuthContext } from "@/contexts/AuthContext";
+import { useAppSelector } from "@/lib/store/hooks";
 import { createClient } from "@/lib/supabase/client";
 
 const supabase = createClient();
 
 export const RecentBooks = () => {
-  const { user } = useAuthContext();
+  const authState = useAppSelector((state) => state.auth);
+  const { user } = authState;
   const [recentBooks, setRecentBooks] = useState<BookCardProps[]>([]);
 
   useEffect(() => {

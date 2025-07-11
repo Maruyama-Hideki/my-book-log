@@ -12,12 +12,13 @@ import {
   DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
 import { Menu } from "lucide-react";
-import { useAuthContext } from "@/contexts/AuthContext";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
+import { useAppSelector } from "@/lib/store/hooks";
 
 export const Header = () => {
-  const { user, profile } = useAuthContext();
+  const authState = useAppSelector((state) => state.auth);
+  const { user, profile, isLoading } = authState;
   const { logout } = useAuth();
   const onClickLogout = () => {
     logout();

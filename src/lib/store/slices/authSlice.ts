@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
 import type { Database } from "@/types/database.types";
-import { kMaxLength } from "buffer";
 
 type Profile = Database["public"]["Tables"]["users"]["Row"];
 
@@ -43,6 +42,28 @@ export const fetchProfile = createAsyncThunk(
   }
 );
 
+export const refreshProfile = createAsyncThunk(
+  "auth/refreshProfile",
+  async (user: User, { rejectWithValue }) => {
+    if (!user) return null;
+    try {
+      console.log("sliceに定義されたrefreshProfileを呼び出しました");
+      const { data, error } = await supabase
+        .from("users")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+      if (error) throw error;
+      return data;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue("unknown error");
+    }
+  }
+);
+
 export const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -66,6 +87,13 @@ export const authSlice = createSlice({
       .addCase(fetchProfile.rejected, (state, action) => {
         state.error = action.payload as string;
         state.profile = null;
+      })
+      .addCase(refreshProfile.fulfilled, (state, action) => {
+        console.log("sliceに定義されたrefreshProfileがfulfilledです");
+        state.profile = action.payload;
+      })
+      .addCase(refreshProfile.rejected, (state, action) => {
+        state.error = action.payload as string;
       });
   },
 });

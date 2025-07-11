@@ -19,6 +19,7 @@ const AuthStateInitializer = ({ children }: { children: React.ReactNode }) => {
       const sessionUser = session?.user ?? null;
       dispatch(setUser(sessionUser));
       if (sessionUser) {
+        console.log("dispatch関数を使ってfetchProfileを呼び出します");
         dispatch(fetchProfile(sessionUser));
       }
       dispatch(setLoading(false));

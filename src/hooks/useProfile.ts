@@ -1,16 +1,20 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useAuthContext } from "@/contexts/AuthContext";
+import { useAppSelector } from "@/lib/store/hooks";
 import { createClient } from "@/lib/supabase/client";
 import { Database } from "@/types/database.types";
 import { z } from "zod";
 import { ProfileSchema } from "@/lib/schema";
+import { useAppDispatch } from "@/lib/store/hooks";
+import { refreshProfile } from "@/lib/store/slices/authSlice";
 
 type Profile = Database["public"]["Tables"]["users"]["Row"];
 
 export const useProfile = () => {
-  const { user, profile, refreshProfile } = useAuthContext();
+  const authState = useAppSelector((state) => state.auth);
+  const { user, profile } = authState;
+  const dispatch = useAppDispatch();
   const supabase = createClient();
 
   const [loading, setLoading] = useState(false);
@@ -55,7 +59,8 @@ export const useProfile = () => {
       const { error } = await supabase.from("users").upsert(updates);
       if (error) throw error;
       alert("プロフィールを更新しました");
-      await refreshProfile();
+      console.log("refreshProfileを呼び出します");
+      await dispatch(refreshProfile(user));
     } catch (error) {
       alert("プロフィールの更新に失敗しました");
       console.error("プロフィール更新エラー:", error);
