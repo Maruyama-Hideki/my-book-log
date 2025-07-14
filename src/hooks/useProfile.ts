@@ -59,7 +59,6 @@ export const useProfile = () => {
       const { error } = await supabase.from("users").upsert(updates);
       if (error) throw error;
       alert("プロフィールを更新しました");
-      console.log("refreshProfileを呼び出します");
       await dispatch(refreshProfile(user));
     } catch (error) {
       alert("プロフィールの更新に失敗しました");
