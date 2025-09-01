@@ -2,15 +2,15 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useAuthContext } from "@/contexts/AuthContext";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
+import { useAppSelector } from "@/lib/store/hooks";
 
 export const SignUpForm = () => {
   const { email, password, setEmail, setPassword, signUp, isLoading, error } =
     useAuth();
-  const { user } = useAuthContext();
+  const user = useAppSelector((state) => state.auth.user);
   const router = useRouter();
 
   useEffect(() => {

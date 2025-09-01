@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAuthContext } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import Image from "next/image";
 import { XIcon } from "lucide-react";
+import { useAppSelector } from "@/lib/store/hooks";
 
 type WishListBookCardProps = {
   id: string;
@@ -16,7 +16,7 @@ type WishListBookCardProps = {
 const supabase = createClient();
 
 export const WishlistBooks = () => {
-  const { user } = useAuthContext();
+  const user = useAppSelector((state) => state.auth.user);
   const [books, setBooks] = useState<WishListBookCardProps[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
