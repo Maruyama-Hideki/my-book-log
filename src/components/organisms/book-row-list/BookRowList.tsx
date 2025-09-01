@@ -2,8 +2,8 @@ import React from "react";
 import { BookRowListCard } from "@/components/molecules/book-row-list-card";
 import { GoogleBookItem } from "@/components/organisms/bookshelf/Bookshelf";
 import { BookCardProps } from "@/components/atoms/bookCard";
-import { useAuthContext } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
+import { useAppSelector } from "@/lib/store/hooks";
 
 type BookRowListProps = {
   results: GoogleBookItem[];
@@ -14,7 +14,7 @@ type BookRowListProps = {
 
 export const BookRowList = (props: BookRowListProps) => {
   const { results, bookList, setBookList, setSearchResult } = props;
-  const { user } = useAuthContext();
+  const user = useAppSelector((state) => state.auth.user);
   const supabase = createClient();
 
   const onClickAdd = async (item: GoogleBookItem) => {

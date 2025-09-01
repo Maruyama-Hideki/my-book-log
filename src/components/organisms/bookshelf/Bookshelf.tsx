@@ -18,9 +18,9 @@ import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import { getBookData } from "@/lib/gba";
 import { BookRowList } from "@/components/organisms/book-row-list";
-import { useAuthContext } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
+import { useAppSelector } from "@/lib/store/hooks";
 
 export type GoogleBookItem = {
   id: string;
@@ -39,7 +39,7 @@ export type GoogleBookItem = {
 const supabase = createClient();
 
 export const Bookshelf = () => {
-  const { user } = useAuthContext();
+  const user = useAppSelector((state) => state.auth.user);
 
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
