@@ -4,54 +4,13 @@
 
 import React from "react";
 import { BookCardCarousel } from "../../molecules/book-card-carousel/BookCardCarousel";
-import { BookCardProps } from "@/components/atoms/bookCard";
-import { useState, useEffect } from "react";
-import { useAppSelector } from "@/lib/store/hooks";
-import { createClient } from "@/lib/supabase/client";
+import { useFetchRecentBooks } from "@/hooks/useFetchRecentBooks";
 
-const supabase = createClient();
 
 export const RecentBooks = () => {
-  const authState = useAppSelector((state) => state.auth);
-  const { user } = authState;
-  const [recentBooks, setRecentBooks] = useState<BookCardProps[]>([]);
+  const { fetchedRecentBooks } = useFetchRecentBooks();
 
-  useEffect(() => {
-    const fetchRecentBooks = async () => {
-      if (user) {
-        const { data, error } = await supabase
-          .from("books")
-          .select("*")
-          .eq("user_id", user.id)
-          .eq("status", "read")
-          .order("created_at", { ascending: false })
-          .limit(10);
-
-        if (error) {
-          console.error("最近読んだ本の取得に失敗しました:", error);
-        } else if (data) {
-          const formattedBooks = data.map((book) => ({
-            id: String(book.id),
-            image: book.image_url || null,
-            title: book.title || "",
-          }));
-          setRecentBooks(formattedBooks);
-        }
-      }
-    };
-    fetchRecentBooks();
-  }, [user]);
-
-  useEffect(() => {
-    const whenLogout = () => {
-      if (!user) {
-        setRecentBooks([]);
-      }
-    };
-    whenLogout();
-  }, [user]);
-
-  if (recentBooks.length === 0) {
+  if (fetchedRecentBooks.length === 0) {
     return null;
   }
 
@@ -62,7 +21,7 @@ export const RecentBooks = () => {
           recent books
         </h2>
         <div className="w-full pt-[36px]">
-          <BookCardCarousel bookCards={recentBooks} />
+          <BookCardCarousel bookCards={fetchedRecentBooks} />
         </div>
       </div>
     </div>

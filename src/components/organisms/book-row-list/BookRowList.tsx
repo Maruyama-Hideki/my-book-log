@@ -2,7 +2,7 @@
 
 import React from "react";
 import { BookRowListCard } from "@/components/molecules/book-row-list-card";
-import { GoogleBookItem } from "@/components/organisms/bookshelf/Bookshelf";
+import { GoogleBookItem } from "@/hooks/useBookshelf";
 import { BookCardProps } from "@/components/atoms/bookCard";
 import { createClient } from "@/lib/supabase/client";
 import { useAppSelector } from "@/lib/store/hooks";
