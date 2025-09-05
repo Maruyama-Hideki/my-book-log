@@ -1,3 +1,5 @@
+// ホームに表示される最近読んだ本
+
 "use client";
 
 import React from "react";

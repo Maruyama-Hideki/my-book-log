@@ -1,3 +1,5 @@
+// 本棚の検索結果に表示されるリスト
+
 import React from "react";
 import { BookRowListCard } from "@/components/molecules/book-row-list-card";
 import { GoogleBookItem } from "@/components/organisms/bookshelf/Bookshelf";
