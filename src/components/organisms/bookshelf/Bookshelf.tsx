@@ -2,7 +2,6 @@
 
 "use client";
 
-import { BookCardProps } from "@/components/atoms/bookCard";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -17,120 +16,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PlusIcon, XIcon } from "lucide-react";
 import Image from "next/image";
-import React, { useState, useEffect } from "react";
-import { getBookData } from "@/lib/gba";
+import React, { useState } from "react";
 import { BookRowList } from "@/components/organisms/book-row-list";
-import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
-import { useAppSelector } from "@/lib/store/hooks";
-
-export type GoogleBookItem = {
-  id: string;
-  volumeInfo: {
-    title: string;
-    authors?: string[];
-    publishedDate?: string;
-    publisher?: string;
-    description?: string;
-    imageLinks?: {
-      thumbnail: string;
-    };
-  };
-};
-
-const supabase = createClient();
+import { useBookshelf } from "@/hooks/useBookshelf";
 
 export const Bookshelf = () => {
-  const user = useAppSelector((state) => state.auth.user);
+  const { bookshelfList, setBookshelfList, onClickSearch, onClickDelete, isLoading, searchResult, setSearchResult } = useBookshelf();
 
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
-  const [searchResult, setSearchResult] = useState<GoogleBookItem[]>([]);
   const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false);
-  const [bookList, setBookList] = useState<BookCardProps[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
 
-  //本棚のデータを取得する関数
-  useEffect(() => {
-    if (!user) {
-      setBookList([]);
-      return;
-    }
-    const fetchUserBooks = async () => {
-      setIsLoading(true);
-      try {
-        if (user) {
-          const { data, error } = await supabase
-            .from("books")
-            .select("*")
-            .eq("user_id", user.id)
-            .eq("status", "read")
-            .order("created_at", { ascending: false });
-
-          if (error) {
-            console.error("本棚のデータ取得に失敗しました:", error);
-            setBookList([]);
-          } else if (data) {
-            const formattedBooks = data.map((book) => {
-              return {
-                id: String(book.id),
-                image: book.image_url || null,
-                title: book.title || "",
-              };
-            });
-            setBookList(formattedBooks);
-          }
-        }
-      } catch (error) {
-        console.error("本棚のデータ取得に失敗しました:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchUserBooks();
-  }, [user]);
-
-  const onClickDelete = async (bookId: string) => {
-    if (!user) {
-      alert("ログインしてください");
-      return;
-    }
-    if (!window.confirm("この本を本棚から削除しますか？")) {
-      return;
-    }
-    try {
-      const { error } = await supabase
-        .from("books")
-        .delete()
-        .eq("user_id", user.id)
-        .eq("id", bookId);
-      if (error) {
-        throw error;
-      }
-      setBookList(bookList.filter((book) => book.id !== bookId));
-    } catch (error) {
-      console.error("本棚のデータ削除に失敗しました:", error);
-      alert("本の削除に失敗しました");
-    }
-  };
-
-  //本棚に追加する本を検索する関数
-  const onClickSearch = async () => {
-    if (!title && !author) {
-      alert("タイトルまたは著者名を入力してください");
-      return;
-    }
-    const data = await getBookData(title, author);
-    if (data.items) {
-      setSearchResult(data.items);
-      setIsSearchDialogOpen(false);
-    } else {
-      alert("本が見つかりませんでした");
-      setSearchResult([]);
-    }
-  };
-
-  const isModalOpen = searchResult.length > 0;
+  const isSearchResultModalOpen = searchResult.length > 0;
 
   return (
     <div className="flex flex-col gap-4 w-[954px] mx-auto">
@@ -180,7 +78,7 @@ export const Bookshelf = () => {
                 </div>
               </div>
               <DialogFooter>
-                <Button variant="outline" type="submit" onClick={onClickSearch}>
+                <Button variant="outline" type="submit" onClick={() => onClickSearch(title, author)}>
                   検索する
                 </Button>
               </DialogFooter>
@@ -189,7 +87,7 @@ export const Bookshelf = () => {
         </Dialog>
         {/* 検索結果を表示するモーダル */}
         <Dialog
-          open={isModalOpen}
+          open={isSearchResultModalOpen}
           onOpenChange={(isOpen) => !isOpen && setSearchResult([])}
         >
           <DialogContent className="max-w-[700px] w-full max-h-[90vh] flex flex-col">
@@ -202,15 +100,15 @@ export const Bookshelf = () => {
             <div className="overflow-y-auto">
               <BookRowList
                 results={searchResult}
-                bookList={bookList}
-                setBookList={setBookList}
+                bookList={bookshelfList}
+                setBookList={setBookshelfList}
                 setSearchResult={setSearchResult}
               />
             </div>
           </DialogContent>
         </Dialog>
         {/* 本棚に追加した本を表示する */}
-        {bookList.map((book) => (
+        {bookshelfList.map((book) => (
           <Link
             href={`/book/${book.id}`}
             key={book.id}

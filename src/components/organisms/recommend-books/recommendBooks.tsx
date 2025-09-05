@@ -12,6 +12,7 @@ import { getBookData } from "@/lib/gba";
 import { createClient } from "@/lib/supabase/client";
 import { type BookRecommendation } from "@/components/molecules/recommend-book-card";
 import { useAppSelector } from "@/lib/store/hooks";
+import { useFetchRecentBooks } from "@/hooks/useFetchRecentBooks";
 
 type RecommendationResponse = {
   books: Array<BookRecommendation>;
@@ -25,30 +26,9 @@ export const RecommendBooks = () => {
   const { getRecommendation, recommendation, isLoading, error } = useGemini();
   const [mood, setMood] = useState("");
   const [recentBooks, setRecentBooks] = useState<string[]>([""]);
-  const [fetchedRecentBooks, setFetchedRecentBooks] = useState<string[]>([]);
+  const { fetchedRecentBooks } = useFetchRecentBooks();
   const [urls, setUrls] = useState<(string | null)[]>([]);
 
-  // 本棚にあるおすすめに使う本の取得
-  useEffect(() => {
-    const fetchRecentBooks = async () => {
-      if (user) {
-        const { data, error } = await supabase
-          .from("books")
-          .select("*")
-          .eq("user_id", user.id)
-          .order("created_at", { ascending: false })
-          .limit(10);
-
-        if (error) {
-          console.error("最近読んだ本の取得に失敗しました:", error);
-        } else if (data) {
-          const formattedBooks = data.map((book) => book.title);
-          setFetchedRecentBooks(formattedBooks);
-        }
-      }
-    };
-    fetchRecentBooks();
-  }, [user]);
 
   // recommendationの画像を取得
   useEffect(() => {
@@ -102,8 +82,6 @@ export const RecommendBooks = () => {
       const googleBookData = await getBookData(book.title, book.author);
       if (!googleBookData?.items || googleBookData.items.length === 0) return;
       const bestMatch = googleBookData.items[0];
-
-      console.log("bestMatch:", bestMatch);
 
       const bookDataToInsert = {
         user_id: user.id,
@@ -197,7 +175,7 @@ export const RecommendBooks = () => {
             recentBooks:
               recentBooks.filter((book) => book.trim() !== "").length > 0
                 ? recentBooks.filter((book) => book.trim() !== "")
-                : fetchedRecentBooks.filter((book) => book.trim() !== ""),
+                : fetchedRecentBooks.map((book) => book.title),
           })
         }
         className="mt-[12px] font-semibold text-gray-500 hover:bg-black hover:text-white hover:border-black cursor-pointer"
