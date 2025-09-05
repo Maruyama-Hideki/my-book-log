@@ -10,7 +10,6 @@ type BookDetailPageProps = {
 
 const BookDetailPage = async ({
   params,
-  searchParams,
 }: BookDetailPageProps) => {
   const paramsData = await params;
   const supabase = createClient();

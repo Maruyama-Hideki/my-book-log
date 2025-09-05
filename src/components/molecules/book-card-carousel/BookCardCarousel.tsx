@@ -1,6 +1,8 @@
+// ホームに表示されるカルーセル
+
 "use client";
 
-import React, { useCallback, useRef, useState, useEffect } from "react";
+import React, { useCallback, useRef, useState, useEffect, useMemo } from "react";
 import { Carousel, CarouselContent, CarouselItem } from "../../ui/carousel";
 import { BookCard, BookCardProps } from "@/components/atoms/bookCard";
 import Autoplay from "embla-carousel-autoplay";
@@ -20,13 +22,14 @@ export const BookCardCarousel = ({
 
   const [emblaApi, setEmblaApi] = useState<EmblaCarouselType>();
 
-  const [randomIndex] = useState(() => {
+  //カルーセルの初期位置をコンポーネントの再レンダリングに依存させないようにmemo化
+  const randomIndex = useMemo(() => {
     if (!bookCards || bookCards.length === 0) {
       return 0;
     } else {
       return Math.floor(Math.random() * bookCards.length);
     }
-  });
+  },[bookCards]);
 
   const handleInteraction = useCallback(() => {
     if (!emblaApi) return;

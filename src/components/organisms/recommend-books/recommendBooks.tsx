@@ -1,3 +1,5 @@
+// Geminiから取得したおすすめの本を表示するところかな？至急リファクタ
+
 "use client";
 
 import React, { useEffect, useState } from "react";

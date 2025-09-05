@@ -1,3 +1,5 @@
+// マイページのタブ
+
 import { Bookshelf } from "@/components/organisms/bookshelf/Bookshelf";
 import { WishlistBooks } from "@/components/organisms/wishlist-books/WishlistBooks";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
