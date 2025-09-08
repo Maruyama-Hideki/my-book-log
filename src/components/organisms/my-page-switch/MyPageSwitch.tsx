@@ -1,7 +1,7 @@
 // マイページのタブ
 
 import { Bookshelf } from "@/components/organisms/bookshelf/Bookshelf";
-import { WishlistBooks } from "@/components/organisms/wishlist-books/WishlistBooks";
+import { WishListBooks } from "@/components/organisms/wishList-books/WishListBooks";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const MyPageSwitch = () => {
@@ -20,7 +20,7 @@ export const MyPageSwitch = () => {
           <Bookshelf />
         </TabsContent>
         <TabsContent value="読みたい本">
-          <WishlistBooks />
+          <WishListBooks />
         </TabsContent>
       </Tabs>
     </div>

@@ -9,16 +9,17 @@ import { Button } from "../../ui/button";
 import { PlusIcon } from "lucide-react";
 import { RecommendBookCard } from "../../molecules/recommend-book-card";
 import { getBookData } from "@/lib/gba";
-import { createClient } from "@/lib/supabase/client";
 import { type BookRecommendation } from "@/components/molecules/recommend-book-card";
 import { useAppSelector } from "@/lib/store/hooks";
 import { useFetchRecentBooks } from "@/hooks/useFetchRecentBooks";
+import { fetchGoogleBookData } from "@/services/googleBookService";
+import { formatBookData } from "../../../../utils/bookFormatter";
+import { insertUserBook } from "@/services/book-service";
+import { DataBaseError, DuplicateBookError } from "@/lib/errors/bookErrors";
 
 type RecommendationResponse = {
   books: Array<BookRecommendation>;
 };
-
-const supabase = createClient();
 
 export const RecommendBooks = () => {
   const authState = useAppSelector((state) => state.auth);
@@ -79,38 +80,23 @@ export const RecommendBooks = () => {
     if (!user) return;
 
     try {
-      const googleBookData = await getBookData(book.title, book.author);
-      if (!googleBookData?.items || googleBookData.items.length === 0) return;
-      const bestMatch = googleBookData.items[0];
+      const bestMatch = await fetchGoogleBookData(book.title, book.author)
+      const bookDataToInsert = formatBookData(bestMatch, user.id);
 
-      const bookDataToInsert = {
-        user_id: user.id,
-        title: bestMatch.volumeInfo.title,
-        author: bestMatch.volumeInfo.authors?.join(", "),
-        publisher: bestMatch.volumeInfo.publisher,
-        published_date: bestMatch.volumeInfo.publishedDate,
-        description: bestMatch.volumeInfo.description,
-        image_url: bestMatch.volumeInfo.imageLinks?.thumbnail,
-        google_book_id: bestMatch.id,
-        status: "wishlist",
-      };
-
-      const { error } = await supabase.from("books").insert(bookDataToInsert);
-      if (error) {
-        if (error.code === "23505") {
-          console.error("本がすでに本棚に登録されています");
-        } else {
-          throw error;
-        }
-      } else {
+      await insertUserBook(bookDataToInsert);
         alert("本を読みたいリストに追加しました");
-      }
     } catch (error) {
+      if (error instanceof DuplicateBookError) {
+        alert("本がすでに本棚に登録されています");
+      } else if (error instanceof DataBaseError) {
+        alert("データベースに接続できませんでした");
+      }
+      alert("本の追加に失敗しました:" + error);
       console.error("本の追加に失敗しました:", error);
     }
   };
 
-  // 最近読んだ本に登録する本の追加、削除、更新
+  // inputの最近読んだ本に登録する本の追加、削除、更新
   const addBook = () => {
     setRecentBooks([...recentBooks, ""]);
   };
