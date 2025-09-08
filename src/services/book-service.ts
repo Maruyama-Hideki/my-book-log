@@ -1,4 +1,6 @@
 import { createClient } from "@/lib/supabase/client";
+import { DuplicateBookError, DataBaseError } from "@/lib/errors/bookErrors";
+import { Database } from "@/types/database.types";
 
 export const fetchBooks = async (userId:string, status?:string) => {
     const supabase = createClient();
@@ -36,18 +38,21 @@ export const deleteBook = async (userId: string, bookId: string, status?:string)
     }
 }
 
-export const insertUserBook = async (userId: string, book: any) => {
+export const insertUserBook = async (book: Database["public"]["Tables"]["books"]["Insert"]) => {
     const supabase = createClient();
     if(!supabase) {
         throw new Error("Supabase client not initialized");
     }
-    const { error } = await supabase
+    const { data,error } = await supabase
         .from("books")
-        .insert(book);
+        .insert(book)
+        .select()
+        .single();
 
     if (error && error.code === "23505") {
-        console.error("本がすでに本棚に登録されています");
+        throw new DuplicateBookError();
       } else if (error) {
-        throw error;
+        throw new DataBaseError();
       }
+    return data;
 }

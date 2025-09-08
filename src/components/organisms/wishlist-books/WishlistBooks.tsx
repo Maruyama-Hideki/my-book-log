@@ -17,7 +17,7 @@ type WishListBookCardProps = {
 
 const supabase = createClient();
 
-export const WishlistBooks = () => {
+export const WishListBooks = () => {
   const user = useAppSelector((state) => state.auth.user);
   const [books, setBooks] = useState<WishListBookCardProps[]>([]);
   const [isLoading, setIsLoading] = useState(false);

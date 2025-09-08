@@ -1,7 +1,7 @@
 // 本棚の検索結果に表示されるカード
 
 import React from "react";
-import { GoogleBookItem } from "@/components/organisms/bookshelf/Bookshelf";
+import { GoogleBookItem } from "@/hooks/useBookshelf";
 import Image from "next/image";
 
 type BookRowListCardProps = GoogleBookItem & {

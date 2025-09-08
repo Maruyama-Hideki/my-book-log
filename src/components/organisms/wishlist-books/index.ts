@@ -1,1 +1,1 @@
-export * from "./WishlistBooks";
+export * from "./WishListBooks";

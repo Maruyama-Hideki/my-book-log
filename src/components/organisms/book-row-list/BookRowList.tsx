@@ -4,8 +4,8 @@ import React from "react";
 import { BookRowListCard } from "@/components/molecules/book-row-list-card";
 import { GoogleBookItem } from "@/hooks/useBookshelf";
 import { BookCardProps } from "@/components/atoms/bookCard";
-import { createClient } from "@/lib/supabase/client";
 import { useAppSelector } from "@/lib/store/hooks";
+import { insertUserBook } from "@/services/book-service";
 
 type BookRowListProps = {
   results: GoogleBookItem[];
@@ -17,7 +17,6 @@ type BookRowListProps = {
 export const BookRowList = (props: BookRowListProps) => {
   const { results, bookList, setBookList, setSearchResult } = props;
   const user = useAppSelector((state) => state.auth.user);
-  const supabase = createClient();
 
   const onClickAdd = async (item: GoogleBookItem) => {
     if (!user) {
@@ -36,13 +35,13 @@ export const BookRowList = (props: BookRowListProps) => {
       description: item.volumeInfo.description,
     };
 
-    const { data: newBookData, error } = await supabase
-      .from("books")
-      .insert(BookDataToInsert)
-      .select()
-      .single();
-    if (error) {
-      console.error("本棚のデータ登録に失敗しました:", error);
+    const newBookData = await insertUserBook(BookDataToInsert);
+    if (!newBookData) {
+      alert("本の追加に失敗しました");
+      return;
+    }
+    if (newBookData.error) {
+      console.error("本棚のデータ登録に失敗しました:", newBookData.error);
       return;
     } else if (newBookData) {
       const newBook: BookCardProps = {
